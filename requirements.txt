@@ -8,3 +8,4 @@ scipy==1.18.1
 soundfile==0.13.1
 starlette==1.10.0
 uvicorn==0.54.0
+audioop-lts
