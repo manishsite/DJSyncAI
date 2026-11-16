@@ -1,6 +1,10 @@
-starlette>=0.30.0
-uvicorn>=0.23.0
-pydantic>=2.0.0
-httpx>=0.24.0
-python-dotenv>=1.0.0
-numpy
+httpx==0.28.1
+mutagen==1.48.1
+numpy==2.5.5
+pydantic==2.14.3
+pydub==0.25.1
+python-dotenv==1.2.4
+scipy==1.18.1
+soundfile==0.13.1
+starlette==1.10.0
+uvicorn==0.54.0
