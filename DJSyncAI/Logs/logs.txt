@@ -1,0 +1,508 @@
+[2026-11-15 17:56:53] [SERVER] DJSyncAI Server started (Dual-stack IPv6/IPv4) on port 8000.
+[2026-11-15 17:56:53] [SERVER] Ready: Web interface at http://localhost:8000
+[2026-11-15 17:56:53] [SERVER] Logger active: appending to H:\mywebsites\DJSyncAI\Logs\logs.txt
+[2026-11-15 17:58:20] [SERVER] DJSyncAI Server started (Dual-stack IPv6/IPv4) on port 8000.
+[2026-11-15 17:58:20] [SERVER] Ready: Web interface at http://localhost:8000
+[2026-11-15 17:58:20] [SERVER] Logger active: appending to H:\mywebsites\DJSyncAI\Logs\logs.txt
+[2026-11-15 18:00:26] [SERVER] DJSyncAI Server started (Dual-stack IPv6/IPv4) on port 8000.
+[2026-11-15 18:00:26] [SERVER] Ready: Web interface at http://localhost:8000
+[2026-11-15 18:00:26] [SERVER] Logger active: appending to H:\mywebsites\DJSyncAI\Logs\logs.txt
+[2026-11-15 18:01:10] [SERVER] DJSyncAI Server started (Dual-stack IPv6/IPv4) on port 8000.
+[2026-11-15 18:01:10] [SERVER] Ready: Web interface at http://localhost:8000
+[2026-11-15 18:01:10] [SERVER] Logger active: appending to H:\mywebsites\DJSyncAI\Logs\logs.txt
+[2026-11-15 18:01:12] [HTTP] ::1 - "GET / HTTP/1.1" 200 -
+[2026-11-15 18:01:12] [STATUS] DJSyncAI loaded successfully. Origin: http://localhost:8000. Protocol: http:
+[2026-11-15 18:01:12] [HTTP] ::1 - "POST /log HTTP/1.1" 200 -
+[2026-11-15 18:01:12] [HTTP] ::1 - code 404, message File not found
+[2026-11-15 18:01:12] [HTTP] ::1 - "GET /favicon.ico HTTP/1.1" 404 -
+[2026-11-15 18:01:12] [WARN] No Gemini API key configured. Operating in local metadata extraction mode.
+[2026-11-15 18:01:13] [HTTP] ::1 - "POST /log HTTP/1.1" 200 -
+[2026-11-15 18:01:17] [STATUS] File selected by user: "Played_songs_sorted.m3u8" (Size: 39.6 KB, MIME: application/x-mpegurl)
+[2026-11-15 18:01:17] [HTTP] ::1 - "POST /log HTTP/1.1" 200 -
+[2026-11-15 18:01:17] [STATUS] File contents read successfully (40500 characters).
+[2026-11-15 18:01:17] [STATUS] Parsing M3U8 data for "Played_songs_sorted.m3u8"...
+[2026-11-15 18:01:17] [STATUS] Successfully parsed 50 tracks from "Played_songs_sorted.m3u8".
+[2026-11-15 18:01:17] [STATUS] Initiating AI set-flow analysis for 50 tracks...
+[2026-11-15 18:01:17] [WARN] Gemini API key is not set. Skipping remote API call to prevent HTTP 400 errors. Rendering tracklist in local fallback mode.
+[2026-11-15 18:01:17] [WARN] UI Alert: Gemini API Key is not set. Showing tracklist without AI enhancements. (Click 'API Key' in header to configure)
+[2026-11-15 18:01:17] [STATUS] Rendered dashboard table with 50 tracks.
+[2026-11-15 18:01:17] [HTTP] ::1 - "POST /log HTTP/1.1" 200 -
+[2026-11-15 18:03:01] [STATUS] User configured Gemini API Key (key length: 53 chars).
+[2026-11-15 18:03:01] [HTTP] ::1 - "POST /log HTTP/1.1" 200 -
+[2026-11-15 18:03:06] [HTTP] ::1 - "GET / HTTP/1.1" 304 -
+[2026-11-15 18:03:07] [STATUS] DJSyncAI loaded successfully. Origin: http://localhost:8000. Protocol: http:
+[2026-11-15 18:03:07] [HTTP] ::1 - "POST /log HTTP/1.1" 200 -
+[2026-11-15 18:03:07] [STATUS] Gemini API key is configured from localStorage.
+[2026-11-15 18:03:07] [HTTP] ::1 - "POST /log HTTP/1.1" 200 -
+[2026-11-15 18:03:14] [STATUS] File selected by user: "Played_songs_sorted.m3u8" (Size: 39.6 KB, MIME: application/x-mpegurl)
+[2026-11-15 18:03:14] [HTTP] ::1 - "POST /log HTTP/1.1" 200 -
+[2026-11-15 18:03:14] [STATUS] File contents read successfully (40500 characters).
+[2026-11-15 18:03:14] [STATUS] Parsing M3U8 data for "Played_songs_sorted.m3u8"...
+[2026-11-15 18:03:14] [STATUS] Successfully parsed 50 tracks from "Played_songs_sorted.m3u8".
+[2026-11-15 18:03:14] [STATUS] Initiating AI set-flow analysis for 50 tracks...
+[2026-11-15 18:03:14] [STATUS] Sending payload for 50 tracks to Gemini API...
+[2026-11-15 18:03:15] [HTTP] ::1 - "POST /log HTTP/1.1" 200 -
+[2026-11-15 18:03:15] [STATUS] Gemini API returned HTTP status 404.
+[2026-11-15 18:03:15] [HTTP] ::1 - "POST /log HTTP/1.1" 200 -
+[2026-11-15 18:03:15] [BREAK] Gemini API error (Status 404): {
+[2026-11-15 18:03:15] "error": {
+[2026-11-15 18:03:15] "code": 404,
+[2026-11-15 18:03:15] "message": "This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://aistudio.google.com/docs/get-started).",
+[2026-11-15 18:03:15] "status": "NOT_FOUND"
+[2026-11-15 18:03:15] }
+[2026-11-15 18:03:15] }
+[2026-11-15 18:03:15] [BREAK] AI Analysis Error: Gemini API returned HTTP 404: {
+[2026-11-15 18:03:15] "error": {
+[2026-11-15 18:03:15] "code": 404,
+[2026-11-15 18:03:15] "message": "This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://aistudio.google.com/docs/get-started).",
+[2026-11-15 18:03:15] "status": "NOT_FOUND"
+[2026-11-15 18:03:15] }
+[2026-11-15 18:03:15] }
+[2026-11-15 18:03:15] Gemini API returned HTTP 404: {
+[2026-11-15 18:03:15] "error": {
+[2026-11-15 18:03:15] "code": 404,
+[2026-11-15 18:03:15] "message": "This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://aistudio.google.com/docs/get-started).",
+[2026-11-15 18:03:15] "status": "NOT_FOUND"
+[2026-11-15 18:03:15] }
+[2026-11-15 18:03:15] }
+[2026-11-15 18:03:15] Stack: Error: Gemini API returned HTTP 404: {
+[2026-11-15 18:03:15] "error": {
+[2026-11-15 18:03:15] "code": 404,
+[2026-11-15 18:03:15] "message": "This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://aistudio.google.com/docs/get-started).",
+[2026-11-15 18:03:15] "status": "NOT_FOUND"
+[2026-11-15 18:03:15] }
+[2026-11-15 18:03:15] }
+[2026-11-15 18:03:15] at analyzeWithAI (http://localhost:8000/:888:27)
+[2026-11-15 18:03:15] [WARN] UI Alert: AI analysis failed or timed out. Showing parsed tracklist without AI enhancements.
+[2026-11-15 18:03:15] [STATUS] Rendered dashboard table with 50 tracks.
+[2026-11-15 18:03:15] [HTTP] ::1 - "POST /log HTTP/1.1" 200 -
+[2026-11-15 18:07:20] [HTTP] ::1 - "GET / HTTP/1.1" 200 -
+[2026-11-15 18:07:21] [STATUS] DJSyncAI loaded successfully. Origin: http://localhost:8000. Protocol: http:
+[2026-11-15 18:07:21] [HTTP] ::1 - "POST /log HTTP/1.1" 200 -
+[2026-11-15 18:07:21] [STATUS] Gemini API key is configured from localStorage.
+[2026-11-15 18:07:21] [HTTP] ::1 - "POST /log HTTP/1.1" 200 -
+[2026-11-15 18:07:50] [STATUS] User configured Gemini API Key (key length: 53 chars, model: "gemini-3.8-flash").
+[2026-11-15 18:07:50] [HTTP] ::1 - "POST /log HTTP/1.1" 200 -
+[2026-11-15 18:07:58] [STATUS] User loaded demo Rekordbox dataset.
+[2026-11-15 18:07:58] [HTTP] ::1 - "POST /log HTTP/1.1" 200 -
+[2026-11-15 18:07:58] [STATUS] Parsing XML data for "Demo_Rekordbox.xml"...
+[2026-11-15 18:07:58] [STATUS] DOMParser located 7 <TRACK> elements in XML.
+[2026-11-15 18:07:58] [STATUS] Successfully extracted 7 tracks from "Demo_Rekordbox.xml".
+[2026-11-15 18:07:58] [STATUS] Initiating AI set-flow analysis for 7 tracks...
+[2026-11-15 18:07:58] [STATUS] Sending payload for 7 tracks to Gemini API (gemini-3.8-flash)...
+[2026-11-15 18:07:58] [HTTP] ::1 - "POST /log HTTP/1.1" 200 -
+[2026-11-15 18:11:39] [STATUS] Gemini API returned HTTP status 200.
+[2026-11-15 18:11:39] [HTTP] ::1 - "POST /log HTTP/1.1" 200 -
+[2026-11-15 18:11:39] [STATUS] Gemini AI analysis successfully parsed. Vibe: "Euphoric anthems spanning progressive, disco, breaks, and techno.".
+[2026-11-15 18:11:39] [STATUS] Rendered dashboard table with 7 tracks.
+[2026-11-15 18:11:39] [HTTP] ::1 - "POST /log HTTP/1.1" 200 -
+[2026-11-15 18:12:14] [STATUS] User reset the analysis dashboard.
+[2026-11-15 18:12:14] [HTTP] ::1 - "POST /log HTTP/1.1" 200 -
+[2026-11-15 18:12:17] [STATUS] File selected by user: "Played_songs_sorted.m3u8" (Size: 39.6 KB, MIME: application/x-mpegurl)
+[2026-11-15 18:12:17] [HTTP] ::1 - "POST /log HTTP/1.1" 200 -
+[2026-11-15 18:12:17] [STATUS] File contents read successfully (40500 characters).
+[2026-11-15 18:12:17] [STATUS] Parsing M3U8 data for "Played_songs_sorted.m3u8"...
+[2026-11-15 18:12:17] [STATUS] Successfully parsed 50 tracks from "Played_songs_sorted.m3u8".
+[2026-11-15 18:12:17] [STATUS] Initiating AI set-flow analysis for 50 tracks...
+[2026-11-15 18:12:17] [STATUS] Sending payload for 50 tracks to Gemini API (gemini-3.8-flash)...
+[2026-11-15 18:12:18] [HTTP] ::1 - "POST /log HTTP/1.1" 200 -
+[2026-11-15 18:16:35] [STATUS] Gemini API returned HTTP status 200.
+[2026-11-15 18:16:35] [HTTP] ::1 - "POST /log HTTP/1.1" 200 -
+[2026-11-15 18:16:35] [STATUS] Gemini AI analysis successfully parsed. Vibe: "High-octane commercial club and tech house bootlegs".
+[2026-11-15 18:16:35] [STATUS] Rendered dashboard table with 50 tracks.
+[2026-11-15 18:16:36] [HTTP] ::1 - "POST /log HTTP/1.1" 200 -
+[2026-11-15 18:51:05] [SERVER] DJSyncAI Platform v2.0 started on http://localhost:8000
+[2026-11-15 18:51:05] [SERVER] Ready: Web interface at http://localhost:8000
+[2026-11-15 18:51:05] [SERVER] Logger active: appending to H:\mywebsites\DJSyncAI\Logs\logs.txt
+[2026-11-15 18:51:15] [STATUS] Ingesting playlist: "Played_songs_sorted.m3u8" (39.6 KB)
+[2026-11-15 18:51:15] [STATUS] Parsed 60 tracks from Played_songs_sorted.m3u8.
+[2026-11-15 18:51:41] [STATUS] Triggering /api/discover (Target Period: recent_6m)...
+[2026-11-15 18:51:41] [STATUS] Starting Smart Track Discovery (Extended Mixes Only) for DNA: Groove-driven Electronic...
+[2026-11-15 18:51:42] [STATUS] Querying Gemini API (gemini-3.8-flash) for verified Extended Mix candidates...
+[2026-11-15 18:51:54] [STATUS] Triggering /api/discover (Target Period: recent_6m)...
+[2026-11-15 18:51:54] [STATUS] Starting Smart Track Discovery (Extended Mixes Only) for DNA: Groove-driven Electronic...
+[2026-11-15 18:51:55] [STATUS] Querying Gemini API (gemini-3.8-flash) for verified Extended Mix candidates...
+[2026-11-15 18:52:07] [BREAK] Exception during Gemini candidate search: 
+[2026-11-15 18:52:09] [STATUS] Collected 25 candidate tracks across discovery connectors.
+[2026-11-15 18:52:09] [STATUS] Discovery complete: 1 verified Extended Mixes accepted, 0 excluded.
+[2026-11-15 18:52:10] [STATUS] Rendered 1 verified extended tracks in Discovery Dashboard.
+[2026-11-15 18:52:20] [BREAK] Exception during Gemini candidate search: 
+[2026-11-15 18:52:20] [STATUS] Collected 25 candidate tracks across discovery connectors.
+[2026-11-15 18:52:20] [STATUS] Discovery complete: 1 verified Extended Mixes accepted, 0 excluded.
+[2026-11-15 18:52:22] [STATUS] Rendered 1 verified extended tracks in Discovery Dashboard.
+[2026-11-15 18:52:59] [STATUS] Triggering /api/discover (Target Period: recent_6m)...
+[2026-11-15 18:52:59] [STATUS] Starting Smart Track Discovery (Extended Mixes Only) for DNA: Groove-driven Electronic...
+[2026-11-15 18:52:59] [STATUS] Querying Gemini API (gemini-3.8-flash) for verified Extended Mix candidates...
+[2026-11-15 18:53:07] [BREAK] Gemini candidate search failed with HTTP 503: {
+  "error": {
+    "code": 503,
+    "message": "This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.",
+    "status": "UNAVAILABLE"
+  }
+}
+[2026-11-15 18:53:07] [STATUS] Collected 25 candidate tracks across discovery connectors.
+[2026-11-15 18:53:07] [STATUS] Discovery complete: 1 verified Extended Mixes accepted, 0 excluded.
+[2026-11-15 18:53:10] [STATUS] Rendered 1 verified extended tracks in Discovery Dashboard.
+[2026-11-15 18:55:29] [STATUS] Triggering /api/discover (Target Period: all)...
+[2026-11-15 18:55:29] [STATUS] Starting Smart Track Discovery (Extended Mixes Only) for DNA: Groove-driven Electronic...
+[2026-11-15 18:55:29] [STATUS] Querying Gemini API (gemini-3.8-flash) for verified Extended Mix candidates...
+[2026-11-15 21:29:54] [SERVER] DJSyncAI Platform v2.0 started on http://localhost:8000
+[2026-11-15 21:29:54] [SERVER] Ready: Web interface at http://localhost:8000
+[2026-11-15 21:29:54] [SERVER] Logger active: appending to H:\mywebsites\DJSyncAI\Logs\logs.txt
+[2026-11-15 21:31:15] [STATUS] Ingesting playlist: "3star &Above.m3u8" (79.6 KB)
+[2026-11-15 21:31:15] [STATUS] Parsed 60 tracks from 3star &Above.m3u8. Initiating real-time streaming analysis...
+[2026-11-15 22:05:36] [WARN] Audio analysis failed for C:\Users\manis\AppData\Local\Temp\tmpvojwnevo.wav: Audio decoding failed for tmpvojwnevo.wav: Decoding failed. ffmpeg returned error code: 3199971767
+
+Output from ffmpeg/avlib:
+
+ffmpeg version 8.0.1-essentials_build-www.gyan.dev Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Rev8, Built by MSYS2 project)
+  configuration: --enable-gpl --enable-version3 --enable-static --disable-w32threads --disable-autodetect --enable-fontconfig --enable-iconv --enable-gnutls --enable-libxml2 --enable-gmp --enable-bzlib --enable-lzma --enable-zlib --enable-libsrt --enable-libssh --enable-libzmq --enable-avisynth --enable-sdl2 --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxvid --enable-libaom --enable-libopenjpeg --enable-libvpx --enable-mediafoundation --enable-libass --enable-libfreetype --enable-libfribidi --enable-libharfbuzz --enable-libvidstab --enable-libvmaf --enable-libzimg --enable-amf --enable-cuda-llvm --enable-cuvid --enable-dxva2 --enable-d3d11va --enable-d3d12va --enable-ffnvcodec --enable-libvpl --enable-nvdec --enable-nvenc --enable-vaapi --enable-openal --enable-libgme --enable-libopenmpt --enable-libopencore-amrwb --enable-libmp3lame --enable-libtheora --enable-libvo-amrwbenc --enable-libgsm --enable-libopencore-amrnb --enable-libopus --enable-libspeex --enable-libvorbis --enable-librubberband
+  libavutil      60.  8.100 / 60.  8.100
+  libavcodec     62. 11.100 / 62. 11.100
+  libavformat    62.  3.100 / 62.  3.100
+  libavdevice    62.  1.100 / 62.  1.100
+  libavfilter    11.  4.100 / 11.  4.100
+  libswscale      9.  1.100 /  9.  1.100
+  libswresample   6.  1.100 /  6.  1.100
+[in#0 @ 000002385c714440] Error opening input: Invalid data found when processing input
+Error opening input file C:\Users\manis\AppData\Local\Temp\tmpvojwnevo.wav.
+Error opening input files: Invalid data found when processing input
+[2026-11-15 22:06:47] [WARN] Audio analysis failed for C:\Users\manis\AppData\Local\Temp\tmp993xi79z.wav: Audio decoding failed for tmp993xi79z.wav: Decoding failed. ffmpeg returned error code: 3199971767
+
+Output from ffmpeg/avlib:
+
+ffmpeg version 8.0.1-essentials_build-www.gyan.dev Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Rev8, Built by MSYS2 project)
+  configuration: --enable-gpl --enable-version3 --enable-static --disable-w32threads --disable-autodetect --enable-fontconfig --enable-iconv --enable-gnutls --enable-libxml2 --enable-gmp --enable-bzlib --enable-lzma --enable-zlib --enable-libsrt --enable-libssh --enable-libzmq --enable-avisynth --enable-sdl2 --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxvid --enable-libaom --enable-libopenjpeg --enable-libvpx --enable-mediafoundation --enable-libass --enable-libfreetype --enable-libfribidi --enable-libharfbuzz --enable-libvidstab --enable-libvmaf --enable-libzimg --enable-amf --enable-cuda-llvm --enable-cuvid --enable-dxva2 --enable-d3d11va --enable-d3d12va --enable-ffnvcodec --enable-libvpl --enable-nvdec --enable-nvenc --enable-vaapi --enable-openal --enable-libgme --enable-libopenmpt --enable-libopencore-amrwb --enable-libmp3lame --enable-libtheora --enable-libvo-amrwbenc --enable-libgsm --enable-libopencore-amrnb --enable-libopus --enable-libspeex --enable-libvorbis --enable-librubberband
+  libavutil      60.  8.100 / 60.  8.100
+  libavcodec     62. 11.100 / 62. 11.100
+  libavformat    62.  3.100 / 62.  3.100
+  libavdevice    62.  1.100 / 62.  1.100
+  libavfilter    11.  4.100 / 11.  4.100
+  libswscale      9.  1.100 /  9.  1.100
+  libswresample   6.  1.100 /  6.  1.100
+[in#0 @ 00000248bbe94440] Error opening input: Invalid data found when processing input
+Error opening input file C:\Users\manis\AppData\Local\Temp\tmp993xi79z.wav.
+Error opening input files: Invalid data found when processing input
+[2026-11-15 22:07:07] [WARN] Audio analysis failed for C:\Users\manis\AppData\Local\Temp\tmp9zdg8xs9.wav: Audio decoding failed for tmp9zdg8xs9.wav: Decoding failed. ffmpeg returned error code: 3199971767
+
+Output from ffmpeg/avlib:
+
+ffmpeg version 8.0.1-essentials_build-www.gyan.dev Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Rev8, Built by MSYS2 project)
+  configuration: --enable-gpl --enable-version3 --enable-static --disable-w32threads --disable-autodetect --enable-fontconfig --enable-iconv --enable-gnutls --enable-libxml2 --enable-gmp --enable-bzlib --enable-lzma --enable-zlib --enable-libsrt --enable-libssh --enable-libzmq --enable-avisynth --enable-sdl2 --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxvid --enable-libaom --enable-libopenjpeg --enable-libvpx --enable-mediafoundation --enable-libass --enable-libfreetype --enable-libfribidi --enable-libharfbuzz --enable-libvidstab --enable-libvmaf --enable-libzimg --enable-amf --enable-cuda-llvm --enable-cuvid --enable-dxva2 --enable-d3d11va --enable-d3d12va --enable-ffnvcodec --enable-libvpl --enable-nvdec --enable-nvenc --enable-vaapi --enable-openal --enable-libgme --enable-libopenmpt --enable-libopencore-amrwb --enable-libmp3lame --enable-libtheora --enable-libvo-amrwbenc --enable-libgsm --enable-libopencore-amrnb --enable-libopus --enable-libspeex --enable-libvorbis --enable-librubberband
+  libavutil      60.  8.100 / 60.  8.100
+  libavcodec     62. 11.100 / 62. 11.100
+  libavformat    62.  3.100 / 62.  3.100
+  libavdevice    62.  1.100 / 62.  1.100
+  libavfilter    11.  4.100 / 11.  4.100
+  libswscale      9.  1.100 /  9.  1.100
+  libswresample   6.  1.100 /  6.  1.100
+[in#0 @ 0000020d3bf04440] Error opening input: Invalid data found when processing input
+Error opening input file C:\Users\manis\AppData\Local\Temp\tmp9zdg8xs9.wav.
+Error opening input files: Invalid data found when processing input
+[2026-11-15 22:18:17] [SERVER] DJSyncAI Platform v2.0 started on http://localhost:8000
+[2026-11-15 22:18:17] [SERVER] Ready: Web interface at http://localhost:8000
+[2026-11-15 22:18:17] [SERVER] Logger active: appending to H:\mywebsites\DJSyncAI\Logs\logs.txt
+[2026-11-15 22:18:29] [STATUS] Ingesting playlist: "3star &Above.m3u8" (79.6 KB)
+[2026-11-15 22:18:29] [STATUS] Parsed 541 tracks from 3star &Above.m3u8. Initiating real-time streaming analysis...
+[2026-11-15 22:25:53] [SERVER] DJSyncAI Platform v2.0 started on http://localhost:8000
+[2026-11-15 22:25:53] [SERVER] Ready: Web interface at http://localhost:8000
+[2026-11-15 22:25:53] [SERVER] Logger active: appending to H:\mywebsites\DJSyncAI\Logs\logs.txt
+[2026-11-15 22:26:03] [STATUS] Ingesting playlist: "3star &Above.m3u8" (79.6 KB)
+[2026-11-15 22:26:03] [STATUS] Parsed 541 tracks from 3star &Above.m3u8. Initiating real-time streaming analysis...
+[2026-11-15 22:27:32] [SERVER] DJSyncAI Platform v2.0 started on http://localhost:8000
+[2026-11-15 22:27:32] [SERVER] Ready: Web interface at http://localhost:8000
+[2026-11-15 22:27:32] [SERVER] Logger active: appending to H:\mywebsites\DJSyncAI\Logs\logs.txt
+[2026-11-15 22:27:37] [STATUS] Ingesting playlist: "3star &Above.m3u8" (79.6 KB)
+[2026-11-15 22:27:37] [STATUS] Parsed 541 tracks from 3star &Above.m3u8. Initiating real-time streaming analysis...
+[2026-11-15 22:31:13] [STATUS] Gemini API key configured (model: gemini-3.8-flash).
+[2026-11-15 22:31:23] [STATUS] Ingesting playlist: "3star &Above.m3u8" (79.6 KB)
+[2026-11-15 22:31:23] [STATUS] Parsed 541 tracks from 3star &Above.m3u8. Initiating real-time streaming analysis...
+[2026-11-15 22:31:23] [STATUS] Sending 541 tracks to Gemini (gemini-3.8-flash) for musicological interpretation...
+[2026-11-15 22:31:27] [WARN] Gemini interpretation returned HTTP 503: {
+  "error": {
+    "code": 503,
+    "message": "This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.",
+    "status": "UNAVAILABLE"
+  }
+}
+[2026-11-15 22:32:54] [STATUS] Ingesting playlist: "Tech_House_Peak_Hour.m3u8" (0.4 KB)
+[2026-11-15 22:32:54] [STATUS] Parsed 3 tracks from Tech_House_Peak_Hour.m3u8. Initiating real-time streaming analysis...
+[2026-11-15 22:33:13] [STATUS] Sending 3 tracks to Gemini (gemini-3.8-flash) for musicological interpretation...
+[2026-11-15 22:33:44] [WARN] Gemini interpretation call failed: 
+[2026-11-15 22:33:53] [WARN] Audio analysis failed for C:\Users\manis\AppData\Local\Temp\tmpq2ohbf0f.wav: Audio decoding failed for tmpq2ohbf0f.wav: Decoding failed. ffmpeg returned error code: 3199971767
+
+Output from ffmpeg/avlib:
+
+ffmpeg version 8.0.1-essentials_build-www.gyan.dev Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Rev8, Built by MSYS2 project)
+  configuration: --enable-gpl --enable-version3 --enable-static --disable-w32threads --disable-autodetect --enable-fontconfig --enable-iconv --enable-gnutls --enable-libxml2 --enable-gmp --enable-bzlib --enable-lzma --enable-zlib --enable-libsrt --enable-libssh --enable-libzmq --enable-avisynth --enable-sdl2 --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxvid --enable-libaom --enable-libopenjpeg --enable-libvpx --enable-mediafoundation --enable-libass --enable-libfreetype --enable-libfribidi --enable-libharfbuzz --enable-libvidstab --enable-libvmaf --enable-libzimg --enable-amf --enable-cuda-llvm --enable-cuvid --enable-dxva2 --enable-d3d11va --enable-d3d12va --enable-ffnvcodec --enable-libvpl --enable-nvdec --enable-nvenc --enable-vaapi --enable-openal --enable-libgme --enable-libopenmpt --enable-libopencore-amrwb --enable-libmp3lame --enable-libtheora --enable-libvo-amrwbenc --enable-libgsm --enable-libopencore-amrnb --enable-libopus --enable-libspeex --enable-libvorbis --enable-librubberband
+  libavutil      60.  8.100 / 60.  8.100
+  libavcodec     62. 11.100 / 62. 11.100
+  libavformat    62.  3.100 / 62.  3.100
+  libavdevice    62.  1.100 / 62.  1.100
+  libavfilter    11.  4.100 / 11.  4.100
+  libswscale      9.  1.100 /  9.  1.100
+  libswresample   6.  1.100 /  6.  1.100
+[in#0 @ 00000259e5e24400] Error opening input: Invalid data found when processing input
+Error opening input file C:\Users\manis\AppData\Local\Temp\tmpq2ohbf0f.wav.
+Error opening input files: Invalid data found when processing input
+[2026-11-15 22:33:57] [STATUS] Launching /api/discover-stream (Target: 60 Extended Mixes, Period: recent_6m)...
+[2026-11-15 22:33:57] [BREAK] Discovery failed: Server returned HTTP 500 {}
+[2026-11-15 22:33:57] [WARN] UI Alert: Discovery error: Server returned HTTP 500
+[2026-11-15 22:36:31] [WARN] Audio analysis failed for C:\Users\manis\AppData\Local\Temp\tmpvhi1t_rh.wav: Audio decoding failed for tmpvhi1t_rh.wav: Decoding failed. ffmpeg returned error code: 3199971767
+
+Output from ffmpeg/avlib:
+
+ffmpeg version 8.0.1-essentials_build-www.gyan.dev Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Rev8, Built by MSYS2 project)
+  configuration: --enable-gpl --enable-version3 --enable-static --disable-w32threads --disable-autodetect --enable-fontconfig --enable-iconv --enable-gnutls --enable-libxml2 --enable-gmp --enable-bzlib --enable-lzma --enable-zlib --enable-libsrt --enable-libssh --enable-libzmq --enable-avisynth --enable-sdl2 --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxvid --enable-libaom --enable-libopenjpeg --enable-libvpx --enable-mediafoundation --enable-libass --enable-libfreetype --enable-libfribidi --enable-libharfbuzz --enable-libvidstab --enable-libvmaf --enable-libzimg --enable-amf --enable-cuda-llvm --enable-cuvid --enable-dxva2 --enable-d3d11va --enable-d3d12va --enable-ffnvcodec --enable-libvpl --enable-nvdec --enable-nvenc --enable-vaapi --enable-openal --enable-libgme --enable-libopenmpt --enable-libopencore-amrwb --enable-libmp3lame --enable-libtheora --enable-libvo-amrwbenc --enable-libgsm --enable-libopencore-amrnb --enable-libopus --enable-libspeex --enable-libvorbis --enable-librubberband
+  libavutil      60.  8.100 / 60.  8.100
+  libavcodec     62. 11.100 / 62. 11.100
+  libavformat    62.  3.100 / 62.  3.100
+  libavdevice    62.  1.100 / 62.  1.100
+  libavfilter    11.  4.100 / 11.  4.100
+  libswscale      9.  1.100 /  9.  1.100
+  libswresample   6.  1.100 /  6.  1.100
+[in#0 @ 000002a22b134440] Error opening input: Invalid data found when processing input
+Error opening input file C:\Users\manis\AppData\Local\Temp\tmpvhi1t_rh.wav.
+Error opening input files: Invalid data found when processing input
+[2026-11-15 22:40:07] [WARN] Audio analysis failed for C:\Users\manis\AppData\Local\Temp\tmp7eprm36h.wav: Audio decoding failed for tmp7eprm36h.wav: Decoding failed. ffmpeg returned error code: 3199971767
+
+Output from ffmpeg/avlib:
+
+ffmpeg version 8.0.1-essentials_build-www.gyan.dev Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Rev8, Built by MSYS2 project)
+  configuration: --enable-gpl --enable-version3 --enable-static --disable-w32threads --disable-autodetect --enable-fontconfig --enable-iconv --enable-gnutls --enable-libxml2 --enable-gmp --enable-bzlib --enable-lzma --enable-zlib --enable-libsrt --enable-libssh --enable-libzmq --enable-avisynth --enable-sdl2 --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxvid --enable-libaom --enable-libopenjpeg --enable-libvpx --enable-mediafoundation --enable-libass --enable-libfreetype --enable-libfribidi --enable-libharfbuzz --enable-libvidstab --enable-libvmaf --enable-libzimg --enable-amf --enable-cuda-llvm --enable-cuvid --enable-dxva2 --enable-d3d11va --enable-d3d12va --enable-ffnvcodec --enable-libvpl --enable-nvdec --enable-nvenc --enable-vaapi --enable-openal --enable-libgme --enable-libopenmpt --enable-libopencore-amrwb --enable-libmp3lame --enable-libtheora --enable-libvo-amrwbenc --enable-libgsm --enable-libopencore-amrnb --enable-libopus --enable-libspeex --enable-libvorbis --enable-librubberband
+  libavutil      60.  8.100 / 60.  8.100
+  libavcodec     62. 11.100 / 62. 11.100
+  libavformat    62.  3.100 / 62.  3.100
+  libavdevice    62.  1.100 / 62.  1.100
+  libavfilter    11.  4.100 / 11.  4.100
+  libswscale      9.  1.100 /  9.  1.100
+  libswresample   6.  1.100 /  6.  1.100
+[in#0 @ 0000029212204400] Error opening input: Invalid data found when processing input
+Error opening input file C:\Users\manis\AppData\Local\Temp\tmp7eprm36h.wav.
+Error opening input files: Invalid data found when processing input
+[2026-11-15 22:40:31] [SERVER] DJSyncAI Platform v2.0 started on http://localhost:8000
+[2026-11-15 22:40:31] [SERVER] Ready: Web interface at http://localhost:8000
+[2026-11-15 22:40:31] [SERVER] Logger active: appending to H:\mywebsites\DJSyncAI\Logs\logs.txt
+[2026-11-15 22:40:53] [SERVER] DJSyncAI Platform v2.0 started on http://localhost:8000
+[2026-11-15 22:40:53] [SERVER] Ready: Web interface at http://localhost:8000
+[2026-11-15 22:40:53] [SERVER] Logger active: appending to H:\mywebsites\DJSyncAI\Logs\logs.txt
+[2026-11-15 22:43:51] [SERVER] DJSyncAI Platform v2.0 started on http://localhost:8000
+[2026-11-15 22:43:51] [SERVER] Ready: Web interface at http://localhost:8000
+[2026-11-15 22:43:51] [SERVER] Logger active: appending to H:\mywebsites\DJSyncAI\Logs\logs.txt
+[2026-11-15 22:57:45] [STATUS] Launching /api/discover-stream (Target: 60 Extended Mixes, Period: recent_6m)...
+[2026-11-15 22:57:45] [BREAK] Discovery failed: Server returned HTTP 500 {}
+[2026-11-15 22:57:45] [WARN] UI Alert: Discovery error: Server returned HTTP 500
+[2026-11-15 22:58:06] [SERVER] DJSyncAI Platform v2.0 started on http://localhost:8000
+[2026-11-15 22:58:06] [SERVER] Ready: Web interface at http://localhost:8000
+[2026-11-15 22:58:06] [SERVER] Logger active: appending to H:\mywebsites\DJSyncAI\Logs\logs.txt
+[2026-11-15 22:58:13] [STATUS] Ingesting playlist: "3star &Above.m3u8" (79.6 KB)
+[2026-11-15 22:58:13] [STATUS] Sending 541 tracks to Gemini (gemini-3.8-flash) for musicological interpretation...
+[2026-11-15 22:58:13] [STATUS] Parsed 541 tracks from 3star &Above.m3u8. Initiating real-time streaming analysis...
+[2026-11-15 22:58:22] [WARN] User cancelled song details analysis.
+[2026-11-15 22:58:29] [STATUS] Ingesting playlist: "Tech_House_Peak_Hour.m3u8" (0.4 KB)
+[2026-11-15 22:58:29] [STATUS] Parsed 3 tracks from Tech_House_Peak_Hour.m3u8. Initiating real-time streaming analysis...
+[2026-11-15 22:58:41] [STATUS] Sending 3 tracks to Gemini (gemini-3.8-flash) for musicological interpretation...
+[2026-11-15 22:59:11] [WARN] Gemini interpretation call failed: 
+[2026-11-15 23:06:10] [WARN] Audio analysis failed for C:\Users\manis\AppData\Local\Temp\tmpzmxji4jg.wav: Audio decoding failed for tmpzmxji4jg.wav: Decoding failed. ffmpeg returned error code: 3199971767
+
+Output from ffmpeg/avlib:
+
+ffmpeg version 8.0.1-essentials_build-www.gyan.dev Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Rev8, Built by MSYS2 project)
+  configuration: --enable-gpl --enable-version3 --enable-static --disable-w32threads --disable-autodetect --enable-fontconfig --enable-iconv --enable-gnutls --enable-libxml2 --enable-gmp --enable-bzlib --enable-lzma --enable-zlib --enable-libsrt --enable-libssh --enable-libzmq --enable-avisynth --enable-sdl2 --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxvid --enable-libaom --enable-libopenjpeg --enable-libvpx --enable-mediafoundation --enable-libass --enable-libfreetype --enable-libfribidi --enable-libharfbuzz --enable-libvidstab --enable-libvmaf --enable-libzimg --enable-amf --enable-cuda-llvm --enable-cuvid --enable-dxva2 --enable-d3d11va --enable-d3d12va --enable-ffnvcodec --enable-libvpl --enable-nvdec --enable-nvenc --enable-vaapi --enable-openal --enable-libgme --enable-libopenmpt --enable-libopencore-amrwb --enable-libmp3lame --enable-libtheora --enable-libvo-amrwbenc --enable-libgsm --enable-libopencore-amrnb --enable-libopus --enable-libspeex --enable-libvorbis --enable-librubberband
+  libavutil      60.  8.100 / 60.  8.100
+  libavcodec     62. 11.100 / 62. 11.100
+  libavformat    62.  3.100 / 62.  3.100
+  libavdevice    62.  1.100 / 62.  1.100
+  libavfilter    11.  4.100 / 11.  4.100
+  libswscale      9.  1.100 /  9.  1.100
+  libswresample   6.  1.100 /  6.  1.100
+[in#0 @ 00000245dc8c4400] Error opening input: Invalid data found when processing input
+Error opening input file C:\Users\manis\AppData\Local\Temp\tmpzmxji4jg.wav.
+Error opening input files: Invalid data found when processing input
+[2026-11-15 23:08:33] [SERVER] DJSyncAI Platform v2.0 started on http://localhost:8000
+[2026-11-15 23:08:33] [SERVER] Ready: Web interface at http://localhost:8000
+[2026-11-15 23:08:33] [SERVER] Logger active: appending to H:\mywebsites\DJSyncAI\Logs\logs.txt
+[2026-11-15 23:08:39] [STATUS] Ingesting playlist: "Tech_House_Peak_Hour.m3u8" (0.4 KB)
+[2026-11-15 23:08:39] [STATUS] Parsed 3 tracks from Tech_House_Peak_Hour.m3u8. Initiating real-time streaming analysis...
+[2026-11-15 23:08:51] [STATUS] Sending 3 tracks to Gemini (gemini-2.5-flash) for musicological interpretation...
+[2026-11-15 23:08:52] [WARN] Gemini (gemini-2.5-flash) returned HTTP 404: {
+  "error": {
+    "code": 404,
+    "message": "This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features a
+[2026-11-15 23:08:52] [STATUS] Sending 3 tracks to Gemini (gemini-1.5-flash) for musicological interpretation...
+[2026-11-15 23:08:52] [WARN] Gemini (gemini-1.5-flash) returned HTTP 404: {
+  "error": {
+    "code": 404,
+    "message": "models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of av
+[2026-11-15 23:09:16] [STATUS] Launching /api/discover-stream (Target: 60 Extended Mixes, Period: recent_6m)...
+[2026-11-15 23:09:16] [BREAK] Discovery failed: Server returned HTTP 500 {}
+[2026-11-15 23:09:16] [WARN] UI Alert: Discovery error: Server returned HTTP 500
+[2026-11-15 23:14:48] [WARN] Audio analysis failed for C:\Users\manis\AppData\Local\Temp\tmp95pzzvev.wav: Audio decoding failed for tmp95pzzvev.wav: Decoding failed. ffmpeg returned error code: 3199971767
+
+Output from ffmpeg/avlib:
+
+ffmpeg version 8.0.1-essentials_build-www.gyan.dev Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Rev8, Built by MSYS2 project)
+  configuration: --enable-gpl --enable-version3 --enable-static --disable-w32threads --disable-autodetect --enable-fontconfig --enable-iconv --enable-gnutls --enable-libxml2 --enable-gmp --enable-bzlib --enable-lzma --enable-zlib --enable-libsrt --enable-libssh --enable-libzmq --enable-avisynth --enable-sdl2 --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxvid --enable-libaom --enable-libopenjpeg --enable-libvpx --enable-mediafoundation --enable-libass --enable-libfreetype --enable-libfribidi --enable-libharfbuzz --enable-libvidstab --enable-libvmaf --enable-libzimg --enable-amf --enable-cuda-llvm --enable-cuvid --enable-dxva2 --enable-d3d11va --enable-d3d12va --enable-ffnvcodec --enable-libvpl --enable-nvdec --enable-nvenc --enable-vaapi --enable-openal --enable-libgme --enable-libopenmpt --enable-libopencore-amrwb --enable-libmp3lame --enable-libtheora --enable-libvo-amrwbenc --enable-libgsm --enable-libopencore-amrnb --enable-libopus --enable-libspeex --enable-libvorbis --enable-librubberband
+  libavutil      60.  8.100 / 60.  8.100
+  libavcodec     62. 11.100 / 62. 11.100
+  libavformat    62.  3.100 / 62.  3.100
+  libavdevice    62.  1.100 / 62.  1.100
+  libavfilter    11.  4.100 / 11.  4.100
+  libswscale      9.  1.100 /  9.  1.100
+  libswresample   6.  1.100 /  6.  1.100
+[in#0 @ 000002525c0f4400] Error opening input: Invalid data found when processing input
+Error opening input file C:\Users\manis\AppData\Local\Temp\tmp95pzzvev.wav.
+Error opening input files: Invalid data found when processing input
+[2026-11-15 23:15:41] [SERVER] DJSyncAI Platform v2.0 started on http://localhost:8000
+[2026-11-15 23:15:41] [SERVER] Ready: Web interface at http://localhost:8000
+[2026-11-15 23:15:41] [SERVER] Logger active: appending to H:\mywebsites\DJSyncAI\Logs\logs.txt
+[2026-11-15 23:15:47] [STATUS] Ingesting playlist: "Tech_House_Peak_Hour.m3u8" (0.4 KB)
+[2026-11-15 23:15:47] [STATUS] Parsed 3 tracks from Tech_House_Peak_Hour.m3u8. Initiating real-time streaming analysis...
+[2026-11-15 23:15:59] [STATUS] Sending 3 tracks to Gemini (gemini-3.8-flash) for musicological interpretation...
+[2026-11-15 23:16:44] [WARN] Gemini interpretation call timed out on (gemini-3.8-flash) after 45s.
+[2026-11-15 23:16:51] [STATUS] Launching /api/discover-stream (Target: 60 Extended Mixes, Period: recent_6m)...
+[2026-11-15 23:16:54] [STATUS] Querying Gemini API (gemini-3.8-flash) for verified Extended Mix candidates...
+[2026-11-15 23:17:19] [BREAK] Exception during Gemini candidate search: 
+[2026-11-15 23:17:19] [BREAK] Error in /api/discover-stream: float() argument must be a string or a real number, not 'NoneType'
+[2026-11-15 23:22:30] [WARN] Audio analysis failed for C:\Users\manis\AppData\Local\Temp\tmpb4naochl.wav: Audio decoding failed for tmpb4naochl.wav: Decoding failed. ffmpeg returned error code: 3199971767
+
+Output from ffmpeg/avlib:
+
+ffmpeg version 8.0.1-essentials_build-www.gyan.dev Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Rev8, Built by MSYS2 project)
+  configuration: --enable-gpl --enable-version3 --enable-static --disable-w32threads --disable-autodetect --enable-fontconfig --enable-iconv --enable-gnutls --enable-libxml2 --enable-gmp --enable-bzlib --enable-lzma --enable-zlib --enable-libsrt --enable-libssh --enable-libzmq --enable-avisynth --enable-sdl2 --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxvid --enable-libaom --enable-libopenjpeg --enable-libvpx --enable-mediafoundation --enable-libass --enable-libfreetype --enable-libfribidi --enable-libharfbuzz --enable-libvidstab --enable-libvmaf --enable-libzimg --enable-amf --enable-cuda-llvm --enable-cuvid --enable-dxva2 --enable-d3d11va --enable-d3d12va --enable-ffnvcodec --enable-libvpl --enable-nvdec --enable-nvenc --enable-vaapi --enable-openal --enable-libgme --enable-libopenmpt --enable-libopencore-amrwb --enable-libmp3lame --enable-libtheora --enable-libvo-amrwbenc --enable-libgsm --enable-libopencore-amrnb --enable-libopus --enable-libspeex --enable-libvorbis --enable-librubberband
+  libavutil      60.  8.100 / 60.  8.100
+  libavcodec     62. 11.100 / 62. 11.100
+  libavformat    62.  3.100 / 62.  3.100
+  libavdevice    62.  1.100 / 62.  1.100
+  libavfilter    11.  4.100 / 11.  4.100
+  libswscale      9.  1.100 /  9.  1.100
+  libswresample   6.  1.100 /  6.  1.100
+[in#0 @ 000001b5fedf4440] Error opening input: Invalid data found when processing input
+Error opening input file C:\Users\manis\AppData\Local\Temp\tmpb4naochl.wav.
+Error opening input files: Invalid data found when processing input
+[2026-11-15 23:24:44] [WARN] Audio analysis failed for C:\Users\manis\AppData\Local\Temp\tmph_eghcl2.wav: Audio decoding failed for tmph_eghcl2.wav: Decoding failed. ffmpeg returned error code: 3199971767
+
+Output from ffmpeg/avlib:
+
+ffmpeg version 8.0.1-essentials_build-www.gyan.dev Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Rev8, Built by MSYS2 project)
+  configuration: --enable-gpl --enable-version3 --enable-static --disable-w32threads --disable-autodetect --enable-fontconfig --enable-iconv --enable-gnutls --enable-libxml2 --enable-gmp --enable-bzlib --enable-lzma --enable-zlib --enable-libsrt --enable-libssh --enable-libzmq --enable-avisynth --enable-sdl2 --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxvid --enable-libaom --enable-libopenjpeg --enable-libvpx --enable-mediafoundation --enable-libass --enable-libfreetype --enable-libfribidi --enable-libharfbuzz --enable-libvidstab --enable-libvmaf --enable-libzimg --enable-amf --enable-cuda-llvm --enable-cuvid --enable-dxva2 --enable-d3d11va --enable-d3d12va --enable-ffnvcodec --enable-libvpl --enable-nvdec --enable-nvenc --enable-vaapi --enable-openal --enable-libgme --enable-libopenmpt --enable-libopencore-amrwb --enable-libmp3lame --enable-libtheora --enable-libvo-amrwbenc --enable-libgsm --enable-libopencore-amrnb --enable-libopus --enable-libspeex --enable-libvorbis --enable-librubberband
+  libavutil      60.  8.100 / 60.  8.100
+  libavcodec     62. 11.100 / 62. 11.100
+  libavformat    62.  3.100 / 62.  3.100
+  libavdevice    62.  1.100 / 62.  1.100
+  libavfilter    11.  4.100 / 11.  4.100
+  libswscale      9.  1.100 /  9.  1.100
+  libswresample   6.  1.100 /  6.  1.100
+[in#0 @ 00000213fcec4400] Error opening input: Invalid data found when processing input
+Error opening input file C:\Users\manis\AppData\Local\Temp\tmph_eghcl2.wav.
+Error opening input files: Invalid data found when processing input
+[2026-11-15 23:26:40] [SERVER] DJSyncAI Platform v2.0 started on http://localhost:8000
+[2026-11-15 23:26:40] [SERVER] Ready: Web interface at http://localhost:8000
+[2026-11-15 23:26:40] [SERVER] Logger active: appending to H:\mywebsites\DJSyncAI\Logs\logs.txt
+[2026-11-15 23:26:46] [STATUS] Ingesting playlist: "Tech_House_Peak_Hour.m3u8" (0.4 KB)
+[2026-11-15 23:26:46] [STATUS] Parsed 3 tracks from Tech_House_Peak_Hour.m3u8. Initiating real-time streaming analysis...
+[2026-11-15 23:26:58] [STATUS] Sending 3 tracks to Gemini (gemini-3.8-flash) for musicological interpretation...
+[2026-11-15 23:27:58] [WARN] Gemini interpretation call timed out on (gemini-3.8-flash) after 60s.
+[2026-11-15 23:28:05] [STATUS] Launching /api/discover-stream (Target: 60 Extended Mixes, Period: recent_6m)...
+[2026-11-15 23:28:06] [STATUS] Querying Gemini API (gemini-3.8-flash) for verified Extended Mix candidates...
+[2026-11-15 23:29:06] [WARN] Gemini candidate search timed out after 60s. Continuing with certified club catalogue.
+[2026-11-15 23:29:07] [BREAK] Uncaught Exception: Uncaught TypeError: Cannot read properties of null (reading 'toFixed') {}
+[2026-11-15 23:31:47] [WARN] Audio analysis failed for C:\Users\manis\AppData\Local\Temp\tmpojoa2tdn.wav: Audio decoding failed for tmpojoa2tdn.wav: Decoding failed. ffmpeg returned error code: 3199971767
+
+Output from ffmpeg/avlib:
+
+ffmpeg version 8.0.1-essentials_build-www.gyan.dev Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Rev8, Built by MSYS2 project)
+  configuration: --enable-gpl --enable-version3 --enable-static --disable-w32threads --disable-autodetect --enable-fontconfig --enable-iconv --enable-gnutls --enable-libxml2 --enable-gmp --enable-bzlib --enable-lzma --enable-zlib --enable-libsrt --enable-libssh --enable-libzmq --enable-avisynth --enable-sdl2 --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxvid --enable-libaom --enable-libopenjpeg --enable-libvpx --enable-mediafoundation --enable-libass --enable-libfreetype --enable-libfribidi --enable-libharfbuzz --enable-libvidstab --enable-libvmaf --enable-libzimg --enable-amf --enable-cuda-llvm --enable-cuvid --enable-dxva2 --enable-d3d11va --enable-d3d12va --enable-ffnvcodec --enable-libvpl --enable-nvdec --enable-nvenc --enable-vaapi --enable-openal --enable-libgme --enable-libopenmpt --enable-libopencore-amrwb --enable-libmp3lame --enable-libtheora --enable-libvo-amrwbenc --enable-libgsm --enable-libopencore-amrnb --enable-libopus --enable-libspeex --enable-libvorbis --enable-librubberband
+  libavutil      60.  8.100 / 60.  8.100
+  libavcodec     62. 11.100 / 62. 11.100
+  libavformat    62.  3.100 / 62.  3.100
+  libavdevice    62.  1.100 / 62.  1.100
+  libavfilter    11.  4.100 / 11.  4.100
+  libswscale      9.  1.100 /  9.  1.100
+  libswresample   6.  1.100 /  6.  1.100
+[in#0 @ 0000020613fb4400] Error opening input: Invalid data found when processing input
+Error opening input file C:\Users\manis\AppData\Local\Temp\tmpojoa2tdn.wav.
+Error opening input files: Invalid data found when processing input
+[2026-11-15 23:33:53] [SERVER] DJSyncAI Platform v2.0 started on http://localhost:8000
+[2026-11-15 23:33:54] [SERVER] Ready: Web interface at http://localhost:8000
+[2026-11-15 23:33:54] [SERVER] Logger active: appending to H:\mywebsites\DJSyncAI\Logs\logs.txt
+[2026-11-15 23:34:41] [STATUS] Ingesting playlist: "Tech_House_Peak_Hour.m3u8" (0.4 KB)
+[2026-11-15 23:34:41] [STATUS] Parsed 3 tracks from Tech_House_Peak_Hour.m3u8. Initiating real-time streaming analysis...
+[2026-11-15 23:34:53] [STATUS] Verified Google Gemini models for your key: ['gemini-2.5-flash', 'gemini-2.5-pro', 'gemini-2.5-flash-preview-tts', 'gemini-2.5-pro-preview-tts', 'gemma-4-26b-a4b-it', 'gemma-4-31b-it']
+[2026-11-15 23:34:53] [STATUS] Sending 3 tracks to Gemini (gemini-3.8-flash) for musicological interpretation...
+[2026-11-15 23:35:34] [WARN] Gemini interpretation call timed out on (gemini-3.8-flash) after 40s.
+[2026-11-15 23:35:40] [STATUS] Launching /api/discover-stream (Target: 60 Extended Mixes, Period: recent_6m)...
+[2026-11-15 23:35:41] [STATUS] Querying Gemini API (gemini-3.8-flash) for verified Extended Mix candidates...
+[2026-11-15 23:36:21] [WARN] Gemini candidate search timed out after 60s. Continuing with certified club catalogue.
+[2026-11-15 23:36:22] [BREAK] Uncaught Exception: Uncaught TypeError: Cannot read properties of null (reading 'toFixed') {}
+[2026-11-15 23:37:31] [STATUS] User downloaded export: DJSyncAI_50_Extended_Mixes.csv
+[2026-11-15 23:49:08] [SERVER] DJSyncAI Platform v2.0 started on http://localhost:8000
+[2026-11-15 23:49:08] [SERVER] Ready: Web interface at http://localhost:8000
+[2026-11-15 23:49:08] [SERVER] Logger active: appending to H:\mywebsites\DJSyncAI\Logs\logs.txt
+[2026-11-15 23:49:14] [STATUS] Ingesting playlist: "Tech_House_Peak_Hour.m3u8" (0.4 KB)
+[2026-11-15 23:49:14] [STATUS] Verified Google Gemini models for your key: ['gemini-2.5-flash', 'gemini-2.5-pro', 'gemini-2.5-flash-preview-tts', 'gemini-2.5-pro-preview-tts', 'gemma-4-26b-a4b-it', 'gemma-4-31b-it']
+[2026-11-15 23:49:14] [STATUS] Sending 3 representative tracks to Gemini (gemini-3.8-flash) for musicological interpretation...
+[2026-11-15 23:49:14] [STATUS] Parsed 3 tracks from Tech_House_Peak_Hour.m3u8. Initiating real-time streaming analysis...
+[2026-11-15 23:49:49] [STATUS] Gemini (gemini-3.8-flash) returned musical interpretations for 3 tracks.
+[2026-11-15 23:49:56] [STATUS] Launching /api/discover-stream (Target: 60 Extended Mixes, Period: all)...
+[2026-11-15 23:49:58] [STATUS] Querying Gemini API (gemini-3.8-flash) for verified Extended Mix candidates...
+[2026-11-15 23:51:15] [STATUS] Gemini returned 25 initial raw candidate recommendations.
+[2026-11-15 23:51:17] [STATUS] Rendered 60 verified extended tracks in Discovery Dashboard.
+[2026-11-15 23:51:39] [STATUS] User downloaded export: DJSyncAI_50_Extended_Mixes.csv
+[2026-11-15 23:52:47] [STATUS] Ingesting playlist: "Played_songs_sorted.m3u8" (39.6 KB)
+[2026-11-15 23:52:47] [STATUS] Parsed 235 tracks from Played_songs_sorted.m3u8. Initiating real-time streaming analysis...
+[2026-11-15 23:52:47] [STATUS] Sending 15 representative tracks to Gemini (gemini-3.8-flash) for musicological interpretation...
+[2026-11-15 23:52:47] [WARN] Gemini (gemini-3.8-flash) returned HTTP 429: {
+  "error": {
+    "code": 429,
+    "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://aistudio.google.com/docs/rate-limits. To monitor your current usage, hea
+[2026-11-15 23:52:47] [STATUS] Sending 15 representative tracks to Gemini (gemini-2.5-flash) for musicological interpretation...
+[2026-11-15 23:52:48] [WARN] Gemini (gemini-2.5-flash) returned HTTP 404: {
+  "error": {
+    "code": 404,
+    "message": "This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Inter
+[2026-11-15 23:52:48] [STATUS] Sending 15 representative tracks to Gemini (gemini-2.5-pro) for musicological interpretation...
+[2026-11-15 23:52:48] [WARN] Gemini (gemini-2.5-pro) returned HTTP 404: {
+  "error": {
+    "code": 404,
+    "message": "This model models/gemini-2.5-pro is no longer available to new users. Please update your code to use models/gemini-3.1-pro-preview for the latest features and improvements. We recommend you to use the I
+[2026-11-15 23:52:48] [STATUS] Sending 15 representative tracks to Gemini (gemini-2.5-flash-preview-tts) for musicological interpretation...
+[2026-11-15 23:52:49] [WARN] Gemini (gemini-2.5-flash-preview-tts) returned HTTP 400: {
+  "error": {
+    "code": 400,
+    "message": "The requested combination of response modalities (TEXT) is not supported by the model. models/gemini-2.5-flash-preview-tts accepts the following combination of response modalities:\n* AUDIO\n",
+    "sta
+[2026-11-15 23:52:49] [STATUS] Sending 15 representative tracks to Gemini (gemini-2.5-pro-preview-tts) for musicological interpretation...
+[2026-11-15 23:52:50] [WARN] Gemini (gemini-2.5-pro-preview-tts) returned HTTP 429: {
+  "error": {
+    "code": 429,
+    "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://aistudio.google.com/docs/rate-limits. To monitor your current usage, hea
+[2026-11-15 23:52:50] [STATUS] Sending 15 representative tracks to Gemini (gemma-4-26b-a4b-it) for musicological interpretation...
+[2026-11-15 23:53:18] [STATUS] Sending 15 representative tracks to Gemini (gemma-4-31b-it) for musicological interpretation...
+[2026-11-15 23:53:39] [WARN] Gemini (gemma-4-31b-it) returned HTTP 503: {
+  "error": {
+    "code": 503,
+    "message": "This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.",
+    "status": "UNAVAILABLE"
+  }
+}
+[2026-11-15 23:53:39] [STATUS] Sending 15 representative tracks to Gemini (gemini-flash-latest) for musicological interpretation...
+[2026-11-15 23:55:05] [STATUS] Gemini (gemini-flash-latest) returned musical interpretations for 15 tracks.
+[2026-11-15 23:56:49] [STATUS] Launching /api/discover-stream (Target: 60 Extended Mixes, Period: all)...
+[2026-11-15 23:56:51] [STATUS] Querying Gemini API (gemini-3.8-flash) for verified Extended Mix candidates...
+[2026-11-15 23:56:51] [BREAK] Gemini candidate search failed with HTTP 429: {
+  "error": {
+    "code": 429,
+    "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://aistudio.google.com/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceede
+[2026-11-15 23:56:52] [STATUS] Rendered 60 verified extended tracks in Discovery Dashboard.

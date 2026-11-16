@@ -1,0 +1,2220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DJSyncAI &bull; Rekordbox Analyzer & AI Track Discovery (Extended Mixes Only)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* Slate 900 */
+            color: #f8fafc; /* Slate 50 */
+        }
+        
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+        }
+
+        .glass-card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .neon-text {
+            text-shadow: 0 0 12px rgba(168, 85, 247, 0.5);
+        }
+
+        .neon-cyan {
+            text-shadow: 0 0 12px rgba(6, 182, 212, 0.5);
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-left-color: #a855f7;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            animation: spin 0.9s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .pulse-glow {
+            box-shadow: 0 0 20px -3px rgba(168, 85, 247, 0.4);
+        }
+
+        .pulse-cyan {
+            box-shadow: 0 0 20px -3px rgba(6, 182, 212, 0.4);
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col relative overflow-x-hidden antialiased">
+
+    <!-- Background Decoration -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
+        <div class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-purple-600/15 rounded-full filter blur-[140px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-cyan-600/15 rounded-full filter blur-[140px]"></div>
+        <div class="absolute top-[40%] right-[30%] w-[350px] h-[350px] bg-indigo-600/10 rounded-full filter blur-[120px]"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="w-full p-4 sm:p-5 glass-panel border-b border-gray-800/80 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="p-2 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-400">
+                    <i data-lucide="disc" class="w-6 h-6 animate-[spin_8s_linear_infinite]"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400">DJ SyncAI</h1>
+                        <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-purple-900/60 border border-purple-500/40 text-purple-300">v2.0 Platform</span>
+                    </div>
+                    <p class="text-xs text-gray-400 hidden sm:block">Rekordbox Intelligence &bull; AI Smart Track Discovery (Extended Mixes Only)</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <!-- Logger Connection Badge -->
+                <div id="logger-status-badge" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-800/80 border border-gray-700/80 text-xs transition-all cursor-pointer hover:border-gray-500 shadow-sm" title="Checking background logger server...">
+                    <span id="logger-status-dot" class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                    <span id="logger-status-text" class="text-xs text-amber-300 font-medium">Connecting...</span>
+                </div>
+
+                <!-- API Key Configuration Button -->
+                <button id="api-key-btn" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-purple-500/30 bg-purple-950/30 hover:bg-purple-900/50 text-purple-300 text-xs font-medium transition-all shadow-sm" title="Configure Gemini API Key">
+                    <i data-lucide="key" class="w-3.5 h-3.5"></i>
+                    <span id="api-key-btn-text">API Key</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- API Key Configuration Modal -->
+    <div id="api-key-modal" class="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="glass-panel rounded-2xl max-w-md w-full p-6 border border-purple-500/40 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b border-gray-700/60 pb-3">
+                <h3 class="font-bold text-lg text-white flex items-center gap-2">
+                    <i data-lucide="key" class="w-5 h-5 text-purple-400"></i> Google Gemini API Settings
+                </h3>
+                <button id="close-modal-btn" class="text-gray-400 hover:text-white transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <p class="text-xs text-gray-300 leading-relaxed">
+                Provide your Google Gemini API key to power AI Set Flow Analysis and the <strong class="text-purple-300">60 Extended Mixes Discovery Engine</strong>. Secrets can also be stored securely in the server <code class="text-cyan-300 font-mono">.env</code> file.
+            </p>
+            <div>
+                <label class="block text-xs font-medium text-gray-300 mb-1">Gemini API Key</label>
+                <input type="password" id="api-key-input" placeholder="AIzaSy..." class="w-full bg-gray-900/90 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500 font-mono" />
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-gray-300 mb-1">Gemini Model</label>
+                <select id="api-model-select" class="w-full bg-gray-900/90 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500">
+                    <option value="gemini-3.8-flash" selected>gemini-3.8-flash (Recommended - Fast & Powerful)</option>
+                    <option value="gemini-2.5-flash">gemini-2.5-flash (Google AI Studio Key)</option>
+                    <option value="gemini-3.8-pro">gemini-3.8-pro (Deep Musicology Reasoning)</option>
+                    <option value="gemini-2.5-pro">gemini-2.5-pro</option>
+                </select>
+            </div>
+            <div class="flex items-center justify-between pt-2 border-t border-gray-800">
+                <button id="clear-key-btn" class="text-xs text-red-400 hover:underline">Clear Key</button>
+                <div class="flex gap-2">
+                    <button id="cancel-key-btn" class="px-4 py-1.5 rounded-lg text-xs bg-gray-800 hover:bg-gray-700 text-gray-300">Cancel</button>
+                    <button id="save-key-btn" class="px-4 py-1.5 rounded-lg text-xs bg-purple-600 hover:bg-purple-500 text-white font-medium">Save Settings</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-8">
+        
+        <!-- Error State Banner -->
+        <div id="error-message" class="hidden w-full max-w-3xl mx-auto glass-panel border-red-500/40 rounded-xl p-4 flex items-start gap-3 shadow-lg">
+            <i data-lucide="alert-circle" class="w-6 h-6 text-red-400 shrink-0 mt-0.5"></i>
+            <div class="flex-grow">
+                <h4 class="font-semibold text-red-400">Notice</h4>
+                <p id="error-text" class="text-gray-300 text-sm mt-1"></p>
+            </div>
+            <button id="dismiss-error-btn" class="text-gray-400 hover:text-white text-xs">✕</button>
+        </div>
+
+        <!-- Notification Toast (for Copy/Export feedback) -->
+        <div id="toast-msg" class="fixed bottom-6 right-6 z-50 glass-panel border border-emerald-500/40 text-emerald-300 px-4 py-2.5 rounded-xl shadow-2xl flex items-center gap-2 text-sm hidden transition-all">
+            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+            <span id="toast-text">Action completed</span>
+        </div>
+
+        <!-- ================================================================= -->
+        <!-- SECTION 1: UPLOAD & INGESTION -->
+        <!-- ================================================================= -->
+        <section id="upload-section" class="w-full mt-6">
+            <div class="max-w-2xl mx-auto text-center space-y-6">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-900/30 border border-purple-500/30 text-purple-300 text-xs font-medium">
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Powered by Gemini 3.8 & Rekordbox Engine
+                </div>
+                <h2 class="text-4xl sm:text-5xl font-extrabold neon-text tracking-tight">Analyze Your Set Flow</h2>
+                <p class="text-gray-400 text-base sm:text-lg">
+                    Upload your Rekordbox Playlist XML or M3U8 to extract musical DNA, analyze tempo and harmonic flow, and discover the <strong class="text-cyan-300">60 best-matching Extended Mixes</strong> for your set.
+                </p>
+                
+                <div id="dropzone" class="mt-8 border-2 border-dashed border-gray-600/80 rounded-2xl p-10 hover:border-purple-500 hover:bg-gray-800/20 transition-all cursor-pointer group flex flex-col items-center justify-center gap-4">
+                    <input type="file" id="file-upload" accept=".xml,.m3u8" class="hidden" />
+                    <div class="p-4 rounded-full bg-purple-950/40 border border-purple-500/20 group-hover:scale-110 transition-transform">
+                        <i data-lucide="upload-cloud" class="w-12 h-12 text-purple-400"></i>
+                    </div>
+                    <div>
+                        <p class="text-lg font-semibold text-gray-200">Click to upload or drag & drop</p>
+                        <p class="text-sm text-gray-400 mt-1">Supported formats: Rekordbox <span class="font-mono text-purple-300">.xml</span> or <span class="font-mono text-cyan-300">.m3u8</span></p>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-center gap-4 pt-2">
+                    <button id="demo-btn" class="px-6 py-2.5 rounded-full border border-gray-700 bg-gray-800/40 text-gray-300 hover:bg-gray-800 hover:text-white transition-all text-sm font-medium flex items-center gap-2 shadow-sm">
+                        <i data-lucide="play-circle" class="w-4 h-4 text-purple-400"></i> Try with Demo Data (7 Tracks)
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- LIVE ANALYSIS STATUS PANEL (Section 2 & 3 requirement) -->
+        <!-- ================================================================= -->
+        <section id="loading-section" class="w-full hidden flex flex-col gap-6 max-w-3xl mx-auto glass-panel rounded-2xl p-6 sm:p-8 border border-purple-500/40 shadow-2xl transition-all">
+            <div class="flex items-center justify-between border-b border-gray-800 pb-4">
+                <div class="flex items-center gap-3">
+                    <div class="relative flex items-center justify-center">
+                        <div class="spinner !w-9 !h-9 !border-2"></div>
+                        <i data-lucide="music" class="w-4 h-4 text-purple-400 absolute animate-pulse"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-lg font-bold text-white tracking-tight">Active Song Details Analysis Station</h3>
+                            <span id="ingestion-state-badge" class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-purple-950/80 text-purple-300 border border-purple-500/40 uppercase">Processing</span>
+                        </div>
+                        <p class="text-xs text-gray-400" id="ingestion-stage-text">Reading playlist information...</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="toggle-ingest-log-btn" class="px-3 py-1.5 rounded-lg border border-gray-700 bg-gray-800/40 hover:bg-gray-800 text-gray-300 text-xs font-medium transition-colors flex items-center gap-1.5">
+                        <i data-lucide="terminal" class="w-3.5 h-3.5 text-cyan-400"></i> <span id="toggle-ingest-log-text">Activity Log</span>
+                    </button>
+                    <button id="cancel-analysis-btn" class="px-3 py-1.5 rounded-lg border border-red-500/40 text-red-400 hover:bg-red-950/40 text-xs font-medium transition-colors">
+                        Cancel Analysis
+                    </button>
+                </div>
+            </div>
+
+            <!-- Ingestion Progress Bar -->
+            <div class="w-full space-y-1.5">
+                <div class="flex justify-between text-xs font-mono">
+                    <span class="text-gray-400">Analysis Progress</span>
+                    <span id="ingestion-percent-text" class="text-cyan-300 font-bold">0%</span>
+                </div>
+                <div class="w-full h-2.5 bg-gray-900 rounded-full overflow-hidden border border-gray-800 p-0.5">
+                    <div id="ingestion-progress-bar" class="h-full bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-400 rounded-full transition-all duration-200" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- 4 Live Counter Cards -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full">
+                <div class="glass-card rounded-xl p-3 text-center border border-gray-800">
+                    <p class="text-[10px] text-gray-400 uppercase font-mono font-medium">Tracks Loaded</p>
+                    <p id="ingest-stat-total" class="text-xl font-bold text-white font-mono mt-0.5">0</p>
+                </div>
+                <div class="glass-card rounded-xl p-3 text-center border border-gray-800">
+                    <p class="text-[10px] text-cyan-400 uppercase font-mono font-medium">Analysed</p>
+                    <p id="ingest-stat-analysed" class="text-xl font-bold text-cyan-300 font-mono mt-0.5">0</p>
+                </div>
+                <div class="glass-card rounded-xl p-3 text-center border border-gray-800">
+                    <p class="text-[10px] text-purple-400 uppercase font-mono font-medium">Remaining</p>
+                    <p id="ingest-stat-remaining" class="text-xl font-bold text-purple-300 font-mono mt-0.5">0</p>
+                </div>
+                <div class="glass-card rounded-xl p-3 text-center border border-gray-800">
+                    <p class="text-[10px] text-amber-400 uppercase font-mono font-medium">Incomplete Tags</p>
+                    <p id="ingest-stat-incomplete" class="text-xl font-bold text-amber-300 font-mono mt-0.5">0</p>
+                </div>
+            </div>
+
+            <!-- Ingestion Live Song Inspection Box -->
+            <div class="w-full bg-gray-950/90 border border-gray-800 rounded-xl p-4 font-mono text-xs space-y-2 shadow-inner">
+                <div class="flex items-center justify-between text-gray-400 text-[11px] border-b border-gray-800 pb-2">
+                    <span class="flex items-center gap-1.5 text-cyan-400 font-bold"><i data-lucide="disc" class="w-3.5 h-3.5 animate-spin"></i> Active Track Inspector</span>
+                    <span id="ingestion-track-counter" class="text-gray-300 font-medium">Analysed: 0 / 0 tracks | Remaining: 0</span>
+                </div>
+                <p id="ingestion-current-track" class="text-purple-200 truncate font-semibold text-sm">Inspecting audio metadata...</p>
+                <div class="flex flex-wrap items-center justify-between gap-2 text-[11px] text-gray-400 pt-0.5">
+                    <span id="ingestion-bpm-note">BPM: Detecting...</span>
+                    <span id="ingestion-harmonic-note" class="text-cyan-300">Camelot Key: Mapping...</span>
+                    <span id="ingestion-energy-note" class="text-pink-300 font-mono">Energy: Assessing...</span>
+                </div>
+            </div>
+
+            <!-- Expandable Ingestion Activity Log -->
+            <div id="ingest-activity-log-container" class="hidden w-full space-y-1">
+                <div class="flex items-center justify-between text-[11px] text-gray-400 font-mono">
+                    <span>Live Processing Event Stream</span>
+                    <span id="ingest-timestamp" class="text-gray-500">--:--:--</span>
+                </div>
+                <div id="ingest-activity-log" class="h-28 overflow-y-auto bg-gray-950/90 p-3 rounded-xl border border-gray-800 text-[11px] font-mono text-gray-300 space-y-1 scroll-smooth">
+                    <p class="text-gray-500">[INITIALIZING] Ingestion pipeline armed. Awaiting audio tags...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- SECTION 2: PLAYLIST ANALYSIS DASHBOARD & MUSICAL DNA -->
+        <!-- ================================================================= -->
+        <section id="results-section" class="w-full hidden flex flex-col gap-8">
+            
+            <!-- Completion Status Banner (Section 3 requirement) -->
+            <div class="w-full glass-panel rounded-2xl p-5 border border-emerald-500/40 bg-gradient-to-r from-emerald-950/40 via-gray-900/80 to-cyan-950/40 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shrink-0">
+                        <i data-lucide="check-circle-2" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base sm:text-lg font-extrabold text-white">Playlist analysis complete — your musical DNA is ready.</h3>
+                        <p id="dna-summary-subtitle" class="text-xs text-emerald-300/80 mt-0.5">All loaded songs processed for tempo curve, Camelot harmonic alignment, and set-flow trajectory.</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span id="analysis-completion-badge" class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-emerald-950/90 text-emerald-300 border border-emerald-500/50 shadow-sm">100% Analysed</span>
+                    <button id="reset-btn" class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded-lg text-xs font-medium transition-colors flex items-center gap-1.5 text-gray-300">
+                        <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> New Upload
+                    </button>
+                </div>
+            </div>
+
+            <!-- Complete Musical DNA Summary Grid (Section 3 requirement) -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
+                <div class="glass-panel rounded-xl p-3.5 border-t-2 border-t-indigo-500 flex flex-col gap-1">
+                    <span class="text-[10px] text-gray-400 uppercase font-mono">Total Loaded</span>
+                    <span id="summary-total-tracks" class="text-lg font-bold text-white font-mono">0</span>
+                </div>
+                <div class="glass-panel rounded-xl p-3.5 border-t-2 border-t-emerald-500 flex flex-col gap-1">
+                    <span class="text-[10px] text-emerald-400 uppercase font-mono">Analysed</span>
+                    <span id="summary-analysed-tracks" class="text-lg font-bold text-emerald-300 font-mono">0</span>
+                </div>
+                <div class="glass-panel rounded-xl p-3.5 border-t-2 border-t-amber-500 flex flex-col gap-1">
+                    <span class="text-[10px] text-amber-400 uppercase font-mono">Incomplete Tags</span>
+                    <span id="summary-incomplete-tracks" class="text-lg font-bold text-amber-300 font-mono">0</span>
+                </div>
+                <div class="glass-panel rounded-xl p-3.5 border-t-2 border-t-cyan-500 flex flex-col gap-1">
+                    <span class="text-[10px] text-cyan-400 uppercase font-mono">BPM Range</span>
+                    <span id="summary-bpm-range" class="text-xs font-bold text-cyan-300 font-mono truncate">120 - 130</span>
+                </div>
+                <div class="glass-panel rounded-xl p-3.5 border-t-2 border-t-purple-500 flex flex-col gap-1">
+                    <span class="text-[10px] text-purple-400 uppercase font-mono">Primary Genres</span>
+                    <span id="summary-genres" class="text-xs font-bold text-purple-300 truncate">House, Techno</span>
+                </div>
+                <div class="glass-panel rounded-xl p-3.5 border-t-2 border-t-pink-500 flex flex-col gap-1">
+                    <span class="text-[10px] text-pink-400 uppercase font-mono">Energy Profile</span>
+                    <span id="summary-energy-profile" class="text-xs font-bold text-pink-300 truncate">Peak Club Flow</span>
+                </div>
+                <div class="glass-panel rounded-xl p-3.5 border-t-2 border-t-blue-500 flex flex-col gap-1 col-span-2 sm:col-span-1">
+                    <span class="text-[10px] text-blue-400 uppercase font-mono">Camelot Wheel</span>
+                    <span id="summary-key-distribution" class="text-xs font-bold text-blue-300 font-mono truncate">8A, 6B, 11B</span>
+                </div>
+            </div>
+
+            <!-- Insights Grid (Overall Vibe, BPM Landscape, Pattern & Flow) -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
+                <!-- Vibe -->
+                <div class="glass-panel rounded-xl p-5 border-t-4 border-t-pink-500 flex flex-col gap-2 relative overflow-hidden">
+                    <i data-lucide="sparkles" class="absolute top-4 right-4 w-12 h-12 text-pink-500/10"></i>
+                    <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Overall Vibe</h3>
+                    <p id="insight-vibe" class="text-xl font-bold text-white mt-1 leading-snug">...</p>
+                </div>
+                <!-- BPM Range -->
+                <div class="glass-panel rounded-xl p-5 border-t-4 border-t-cyan-500 flex flex-col gap-2 relative overflow-hidden">
+                    <i data-lucide="activity" class="absolute top-4 right-4 w-12 h-12 text-cyan-500/10"></i>
+                    <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider">BPM Landscape</h3>
+                    <p id="insight-bpm" class="text-2xl font-bold text-cyan-300 font-mono mt-1">...</p>
+                </div>
+                <!-- Flow -->
+                <div class="glass-panel rounded-xl p-5 border-t-4 border-t-purple-500 flex flex-col gap-2 md:col-span-3 lg:col-span-1 relative overflow-hidden">
+                    <i data-lucide="git-merge" class="absolute top-4 right-4 w-12 h-12 text-purple-500/10"></i>
+                    <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Pattern & Flow</h3>
+                    <p id="insight-flow" class="text-sm text-gray-300 mt-1 leading-relaxed">...</p>
+                </div>
+            </div>
+
+            <!-- AI SMART TRACK DISCOVERY HERO BANNER (60 Extended Mixes Engine) -->
+            <div class="w-full glass-panel rounded-2xl p-6 sm:p-8 border border-purple-500/40 bg-gradient-to-r from-purple-950/40 via-slate-900/80 to-cyan-950/40 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+                <div class="space-y-3 max-w-2xl">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/60 border border-cyan-400/40 text-cyan-300 text-xs font-bold tracking-wider uppercase">
+                        <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Strict Filter: Extended Mixes & Extended Edits Only
+                    </div>
+                    <h3 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">AI Smart Track Discovery</h3>
+                    <p class="text-sm text-gray-300 leading-relaxed">
+                        Discover the <strong class="text-cyan-300">60 best-matching, verified Extended Mixes</strong> matching your set's musical DNA, BPM gradient, and Camelot keys. Radio edits, short versions, and unverified original mixes are strictly rejected.
+                    </p>
+                    <div class="flex flex-wrap items-center gap-4 text-xs text-gray-400 pt-1">
+                        <span class="flex items-center gap-1.5"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Max 60 Unique Extended Mixes</span>
+                        <span class="flex items-center gap-1.5"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Camelot Harmonic Compatibility</span>
+                        <span class="flex items-center gap-1.5"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> 5-Phase Set Sequence</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-col items-center sm:items-end gap-3 w-full md:w-auto shrink-0">
+                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                        <select id="discovery-period-select" class="bg-gray-900 border border-gray-700 text-xs text-gray-200 rounded-xl px-3 py-2.5 focus:outline-none focus:border-purple-500 font-medium">
+                            <option value="all">All Release Eras (Club Classics + New)</option>
+                            <option value="recent_6m" selected>Recent Only (Rolling 6 Months)</option>
+                            <option value="recent_1y">Recent (Last 12 Months)</option>
+                        </select>
+                    </div>
+                    <button id="start-discovery-btn" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-gradient-to-r from-purple-600 via-pink-600 to-cyan-500 hover:from-purple-500 hover:to-cyan-400 text-white font-bold text-sm tracking-wide flex items-center justify-center gap-2.5 shadow-lg transition-all transform hover:scale-[1.02] active:scale-95 pulse-glow">
+                        <i data-lucide="sparkles" class="w-5 h-5"></i> Discover 60 Extended Mixes
+                    </button>
+                </div>
+            </div>
+
+            <!-- Existing Ingested Tracks Table -->
+            <div class="glass-panel rounded-xl overflow-hidden shadow-2xl flex flex-col">
+                <div class="p-4 border-b border-gray-700/50 bg-gray-800/40 flex flex-wrap justify-between items-center gap-3">
+                    <div class="flex items-center gap-3">
+                        <h3 class="font-semibold text-base sm:text-lg flex items-center gap-2 text-white">
+                            <i data-lucide="list-music" class="w-5 h-5 text-purple-400"></i> Uploaded Set Tracklist
+                        </h3>
+                        <span id="track-count" class="text-xs bg-gray-700 px-2.5 py-1 rounded-full text-gray-300 font-medium">0 Tracks</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button id="link-audio-btn" class="px-3 py-1.5 rounded-lg border border-purple-500/40 bg-purple-950/60 hover:bg-purple-900/60 text-purple-200 text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm" title="Select your local music folder or audio files to run real audio signal analysis">
+                            <i data-lucide="folder-search" class="w-3.5 h-3.5 text-cyan-400"></i> Link Local Audio Files / Folder
+                        </button>
+                        <input type="file" id="link-audio-input" multiple accept="audio/*,.mp3,.wav,.flac,.aif,.aiff,.m4a,.aac,.ogg" class="hidden">
+                        <input type="file" id="link-folder-input" webkitdirectory directory multiple class="hidden">
+                    </div>
+                </div>
+                <div class="overflow-x-auto w-full">
+                    <table class="w-full text-left border-collapse whitespace-nowrap">
+                        <thead>
+                            <tr class="bg-gray-800/50 text-gray-400 text-xs uppercase tracking-wider">
+                                <th class="p-4 font-medium">#</th>
+                                <th class="p-4 font-medium text-center">Status</th>
+                                <th class="p-4 font-medium">Title</th>
+                                <th class="p-4 font-medium">Artist</th>
+                                <th class="p-4 font-medium">Genre / Style</th>
+                                <th class="p-4 font-medium text-right">BPM</th>
+                                <th class="p-4 font-medium text-center">Key</th>
+                                <th class="p-4 font-medium text-center">Year</th>
+                                <th class="p-4 font-medium text-center">Energy</th>
+                                <th class="p-4 font-medium text-center">Danceability</th>
+                            </tr>
+                        </thead>
+                        <tbody id="track-table-body" class="divide-y divide-gray-700/50 text-sm">
+                            <!-- Rows rendered via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- SECTION 3: EXTENDED MIX DISCOVERY STATUS PANEL (17 Stages & 7 Live Counters) -->
+        <!-- ================================================================= -->
+        <section id="discovery-progress-section" class="w-full hidden glass-panel rounded-2xl p-6 sm:p-8 border border-purple-500/40 shadow-2xl flex flex-col gap-6 transition-all">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-800 pb-4">
+                <div class="flex items-center gap-3.5">
+                    <div class="relative flex items-center justify-center">
+                        <div class="spinner !w-9 !h-9 !border-2"></div>
+                        <i data-lucide="sparkles" class="w-4 h-4 text-cyan-400 absolute animate-pulse"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2.5">
+                            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                AI Extended Mix Discovery Engine
+                            </h3>
+                            <span id="discovery-state-badge" class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-cyan-950/80 text-cyan-300 border border-cyan-400/40 uppercase">Searching</span>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-0.5" id="progress-status-text">Preparing your musical discovery profile...</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2.5">
+                    <span id="discovery-timestamp" class="text-xs text-gray-500 font-mono hidden sm:inline">--:--:--</span>
+                    <button id="toggle-discovery-log-btn" class="px-3 py-1.5 rounded-lg border border-gray-700 bg-gray-800/40 hover:bg-gray-800 text-gray-300 text-xs font-medium transition-colors flex items-center gap-1.5">
+                        <i data-lucide="terminal" class="w-3.5 h-3.5 text-purple-400"></i> Telemetry Feed
+                    </button>
+                    <button id="retry-discovery-btn" class="hidden px-3.5 py-1.5 rounded-lg border border-purple-500/50 bg-purple-950/50 text-purple-300 hover:bg-purple-900 text-xs font-medium transition-colors">
+                        Retry Discovery
+                    </button>
+                    <button id="cancel-discovery-btn" class="px-3.5 py-1.5 rounded-lg border border-red-500/40 text-red-400 hover:bg-red-950/40 text-xs font-medium transition-colors">
+                        Cancel Search
+                    </button>
+                </div>
+            </div>
+
+            <!-- 17-Stage Visual Pipeline (Section 4 requirement) -->
+            <div class="space-y-1.5">
+                <div class="flex items-center justify-between text-[11px] text-gray-400 font-mono">
+                    <span class="flex items-center gap-1.5 text-purple-300 font-semibold">
+                        <i data-lucide="layers" class="w-3.5 h-3.5"></i> 17-Stage Extended Mix Pipeline
+                    </span>
+                    <span id="discovery-progress-percent" class="text-cyan-300 font-bold">0% Complete</span>
+                </div>
+                <div class="w-full h-2 bg-gray-900 rounded-full overflow-hidden border border-gray-800 p-0.5">
+                    <div id="discovery-progress-bar" class="h-full bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-400 rounded-full transition-all duration-300" style="width: 4%"></div>
+                </div>
+                
+                <!-- 17 Stage Badges Grid -->
+                <div class="grid grid-cols-3 sm:grid-cols-6 lg:grid-cols-9 xl:grid-cols-17 gap-1.5 pt-2 text-center text-[10px] font-mono font-medium">
+                    <div id="stage-1" class="p-1.5 rounded bg-purple-900/60 border border-purple-400 text-purple-200 truncate" title="1. Preparing your musical discovery profile...">1. Profile</div>
+                    <div id="stage-2" class="p-1.5 rounded bg-gray-800/40 border border-gray-700 text-gray-500 truncate" title="2. Searching Beatport...">2. Beatport</div>
+                    <div id="stage-3" class="p-1.5 rounded bg-gray-800/40 border border-gray-700 text-gray-500 truncate" title="3. Searching 1001Tracklists...">3. 1001TL</div>
+                    <div id="stage-4" class="p-1.5 rounded bg-gray-800/40 border border-gray-700 text-gray-500 truncate" title="4. Searching SoundCloud...">4. SoundCloud</div>
+                    <div id="stage-5" class="p-1.5 rounded bg-gray-800/40 border border-gray-700 text-gray-500 truncate" title="5. Searching BPM Supreme...">5. BPM Sup.</div>
+                    <div id="stage-6" class="p-1.5 rounded bg-gray-800/40 border border-gray-700 text-gray-500 truncate" title="6. Searching Traxsource...">6. Traxsrc</div>
+                    <div id="stage-7" class="p-1.5 rounded bg-gray-800/40 border border-gray-700 text-gray-500 truncate" title="7. Discovering additional matching tracks...">7. Candidates</div>
+                    <div id="stage-8" class="p-1.5 rounded bg-gray-800/40 border border-gray-700 text-gray-500 truncate" title="8. Checking exact mix and version titles...">8. Titles</div>
+                    <div id="stage-9" class="p-1.5 rounded bg-gray-800/40 border border-gray-700 text-gray-500 truncate" title="9. Verifying Extended Mix / Extended Edit versions...">9. Verify</div>
+                    <div id="stage-10" class="p-1.5 rounded bg-gray-800/40 border border-gray-700 text-gray-500 truncate" title="10. Filtering out radio edits and short versions...">10. Filter</div>
+                    <div id="stage-11" class="p-1.5 rounded bg-gray-800/40 border border-gray-700 text-gray-500 truncate" title="11. Checking BPM and musical key compatibility...">11. BPM/Key</div>
+                    <div id="stage-12" class="p-1.5 rounded bg-gray-800/40 border border-gray-700 text-gray-500 truncate" title="12. Comparing energy, groove and musical style...">12. Groove</div>
+                    <div id="stage-13" class="p-1.5 rounded bg-gray-800/40 border border-gray-700 text-gray-500 truncate" title="13. Calculating musical similarity scores...">13. Scoring</div>
+                    <div id="stage-14" class="p-1.5 rounded bg-gray-800/40 border border-gray-700 text-gray-500 truncate" title="14. Removing duplicate tracks and versions...">14. Dedup</div>
+                    <div id="stage-15" class="p-1.5 rounded bg-gray-800/40 border border-gray-700 text-gray-500 truncate" title="15. Ranking your best 60 extended mixes...">15. Rank 60</div>
+                    <div id="stage-16" class="p-1.5 rounded bg-gray-800/40 border border-gray-700 text-gray-500 truncate" title="16. Building your suggested DJ set sequence...">16. Sequence</div>
+                    <div id="stage-17" class="p-1.5 rounded bg-gray-800/40 border border-gray-700 text-gray-500 truncate" title="17. Discovery completed successfully.">17. Done</div>
+                </div>
+            </div>
+
+            <!-- 7 Live Discovery Counters (Section 5 requirement) -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5 pt-1">
+                <div class="glass-card rounded-xl p-3 text-center border border-gray-800">
+                    <p class="text-[10px] text-cyan-400 uppercase font-mono font-medium">Discovered</p>
+                    <p id="stat-scanned" class="text-xl font-bold text-cyan-300 font-mono mt-0.5">0</p>
+                </div>
+                <div class="glass-card rounded-xl p-3 text-center border border-gray-800">
+                    <p class="text-[10px] text-emerald-400 uppercase font-mono font-medium">Verified Ext.</p>
+                    <p id="stat-verified" class="text-xl font-bold text-emerald-400 font-mono mt-0.5">0</p>
+                </div>
+                <div class="glass-card rounded-xl p-3 text-center border border-gray-800">
+                    <p class="text-[10px] text-rose-400 uppercase font-mono font-medium">Rejected Radio</p>
+                    <p id="stat-rejected" class="text-xl font-bold text-rose-400 font-mono mt-0.5">0</p>
+                </div>
+                <div class="glass-card rounded-xl p-3 text-center border border-gray-800">
+                    <p class="text-[10px] text-orange-400 uppercase font-mono font-medium">Unverified</p>
+                    <p id="stat-rejected-unverified" class="text-xl font-bold text-orange-400 font-mono mt-0.5">0</p>
+                </div>
+                <div class="glass-card rounded-xl p-3 text-center border border-gray-800">
+                    <p class="text-[10px] text-amber-400 uppercase font-mono font-medium">Duplicates</p>
+                    <p id="stat-duplicates" class="text-xl font-bold text-amber-300 font-mono mt-0.5">0</p>
+                </div>
+                <div class="glass-card rounded-xl p-3 text-center border border-gray-800">
+                    <p class="text-[10px] text-purple-400 uppercase font-mono font-medium">Eligible Left</p>
+                    <p id="stat-eligible" class="text-xl font-bold text-purple-300 font-mono mt-0.5">0</p>
+                </div>
+                <div class="glass-card rounded-xl p-3 text-center border border-gray-800 col-span-2 sm:col-span-1">
+                    <p class="text-[10px] text-pink-400 uppercase font-mono font-medium">Target</p>
+                    <p id="stat-final-rec" class="text-xl font-bold text-pink-300 font-mono mt-0.5">0 / 60</p>
+                </div>
+            </div>
+
+            <!-- Live Discovery Terminal Stream (Section 6 & 7 Real-Time Feedback) -->
+            <div id="discovery-log-container" class="w-full bg-gray-950/90 border border-gray-800 rounded-xl p-4 font-mono text-xs space-y-2 shadow-2xl">
+                <div class="flex items-center justify-between border-b border-gray-800 pb-2 text-[11px] text-gray-400">
+                    <span class="flex items-center gap-2 text-cyan-400 font-bold">
+                        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+                        LIVE AUDIT & TELEMETRY STREAM
+                    </span>
+                    <span class="text-gray-500">Real Backend Event Pipe (SSE)</span>
+                </div>
+                <div id="discovery-live-log" class="h-40 overflow-y-auto space-y-1.5 text-[11px] text-gray-300 font-mono pr-2 scroll-smooth">
+                    <p class="text-gray-500">[INITIALIZING] Preparing musical DNA parameters & Camelot key matrix...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- SECTION 4: DISCOVERED EXTENDED MIXES DASHBOARD & SEQUENCER -->
+        <!-- ================================================================= -->
+        <section id="discovery-results-section" class="w-full hidden flex flex-col gap-6">
+            
+            <!-- Top Controls & Export Bar -->
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 glass-panel rounded-2xl p-5 border border-purple-500/30">
+                <div>
+                    <div class="flex items-center gap-3">
+                        <h2 class="text-2xl font-extrabold text-white tracking-tight flex items-center gap-2">
+                            <i data-lucide="sparkles" class="w-6 h-6 text-purple-400"></i> AI Discovered Extended Tracks (60 Mixes)
+                        </h2>
+                        <span id="discovery-badge-count" class="px-2.5 py-1 rounded-full bg-cyan-950/80 border border-cyan-400/40 text-cyan-300 text-xs font-bold font-mono">60 Verified</span>
+                    </div>
+                    <p id="discovery-explanation-text" class="text-xs text-gray-400 mt-1 max-w-2xl leading-relaxed">
+                        Curated strictly from authentic Extended Mixes and Extended Edits matching your playlist flow.
+                    </p>
+                </div>
+
+                <!-- Export Buttons Group -->
+                <div class="flex flex-wrap items-center gap-2">
+                    <button id="export-csv-btn" class="px-3.5 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-200 text-xs font-semibold flex items-center gap-1.5 transition-colors border border-gray-700" title="Export full metadata spreadsheet">
+                        <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5 text-emerald-400"></i> CSV Export
+                    </button>
+                    <button id="export-txt-btn" class="px-3.5 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-200 text-xs font-semibold flex items-center gap-1.5 transition-colors border border-gray-700" title="Export clean DJ tracklist">
+                        <i data-lucide="file-text" class="w-3.5 h-3.5 text-blue-400"></i> TXT Tracklist
+                    </button>
+                    <button id="export-m3u8-btn" class="px-3.5 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-200 text-xs font-semibold flex items-center gap-1.5 transition-colors border border-gray-700" title="Export M3U8 Playlist">
+                        <i data-lucide="list-ordered" class="w-3.5 h-3.5 text-amber-400"></i> M3U8 Playlist
+                    </button>
+                    <button id="export-rekordbox-btn" class="px-4 py-2 rounded-lg bg-purple-700 hover:bg-purple-600 text-white text-xs font-bold flex items-center gap-1.5 transition-colors shadow-md" title="Export Rekordbox XML">
+                        <i data-lucide="disc" class="w-3.5 h-3.5 text-white"></i> Rekordbox XML
+                    </button>
+                </div>
+            </div>
+
+            <!-- View Switcher Tabs -->
+            <div class="flex items-center gap-2 border-b border-gray-800 pb-2">
+                <button id="tab-table-btn" class="px-4 py-2 rounded-lg text-sm font-bold bg-purple-600 text-white flex items-center gap-2 transition-all">
+                    <i data-lucide="table" class="w-4 h-4"></i> Verified Extended Tracks (Table View)
+                </button>
+                <button id="tab-sequence-btn" class="px-4 py-2 rounded-lg text-sm font-semibold bg-gray-800/80 text-gray-400 hover:text-white flex items-center gap-2 transition-all">
+                    <i data-lucide="git-merge" class="w-4 h-4 text-cyan-400"></i> AI DJ Set Sequence (5-Phase Journey)
+                </button>
+            </div>
+
+            <!-- ============================================================= -->
+            <!-- SUB-VIEW A: DISCOVERY TABLE & FILTERS -->
+            <!-- ============================================================= -->
+            <div id="discovery-table-view" class="flex flex-col gap-4">
+                
+                <!-- Filter & Search Toolbar -->
+                <div class="glass-panel rounded-xl p-4 flex flex-wrap items-center gap-3 text-xs">
+                    <div class="flex-grow min-w-[200px]">
+                        <input type="text" id="filter-search-input" placeholder="Search artist, title, genre..." class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-purple-500" />
+                    </div>
+                    <div>
+                        <select id="filter-key-select" class="bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-gray-300 focus:outline-none focus:border-purple-500">
+                            <option value="">All Camelot Keys</option>
+                            <option value="8A">8A (Am)</option>
+                            <option value="9A">9A (Em)</option>
+                            <option value="10A">10A (Bm)</option>
+                            <option value="11A">11A (F#m)</option>
+                            <option value="12A">12A (Dbm)</option>
+                            <option value="1A">1A (Abm)</option>
+                            <option value="2A">2A (Ebm)</option>
+                            <option value="3A">3A (Bbm)</option>
+                            <option value="4A">4A (Fm)</option>
+                            <option value="5A">5A (Cm)</option>
+                            <option value="6A">6A (Gm)</option>
+                            <option value="7A">7A (Dm)</option>
+                            <option value="8B">8B (C)</option>
+                            <option value="9B">9B (G)</option>
+                            <option value="11B">11B (A)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <select id="filter-window-select" class="bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-gray-300 focus:outline-none focus:border-purple-500">
+                            <option value="">All Release Windows</option>
+                            <option value="recent_6m">Recent (Last 6 Months)</option>
+                            <option value="recent_1y">Recent (Last Year)</option>
+                            <option value="classic">All-Time Classic Club</option>
+                        </select>
+                    </div>
+                    <div>
+                        <select id="sort-by-select" class="bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-gray-300 focus:outline-none focus:border-purple-500 font-medium">
+                            <option value="overall">Sort: Overall Score</option>
+                            <option value="dj">Sort: DJ Compatibility</option>
+                            <option value="similarity">Sort: Musical Similarity</option>
+                            <option value="bpm_asc">Sort: BPM (Low → High)</option>
+                            <option value="bpm_desc">Sort: BPM (High → Low)</option>
+                            <option value="energy_desc">Sort: Energy (Peak First)</option>
+                            <option value="date_desc">Sort: Release Date (Newest)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Verified Tracks Table -->
+                <div class="glass-panel rounded-xl overflow-hidden shadow-2xl flex flex-col">
+                    <div class="overflow-x-auto w-full">
+                        <table class="w-full text-left border-collapse whitespace-nowrap text-xs">
+                            <thead>
+                                <tr class="bg-gray-800/60 text-gray-400 uppercase tracking-wider font-semibold border-b border-gray-700/60">
+                                    <th class="p-4">#</th>
+                                    <th class="p-4">Track Title</th>
+                                    <th class="p-4">Artist</th>
+                                    <th class="p-4">Version Type</th>
+                                    <th class="p-4 text-center">Duration</th>
+                                    <th class="p-4 text-center">BPM</th>
+                                    <th class="p-4 text-center">Camelot / Key</th>
+                                    <th class="p-4">Genre / Subgenre</th>
+                                    <th class="p-4 text-center">Energy</th>
+                                    <th class="p-4">Release Date</th>
+                                    <th class="p-4 text-center">Scores</th>
+                                    <th class="p-4">Verification & Source</th>
+                                    <th class="p-4 text-center">Store / Stream</th>
+                                </tr>
+                            </thead>
+                            <tbody id="discovery-table-body" class="divide-y divide-gray-700/50">
+                                <!-- Populated dynamically by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ============================================================= -->
+            <!-- SUB-VIEW B: 5-PHASE AI DJ SET SEQUENCER (Section 7 requirement) -->
+            <!-- ============================================================= -->
+            <div id="discovery-sequence-view" class="hidden flex flex-col gap-6">
+                
+                <div class="glass-panel rounded-xl p-5 border border-cyan-500/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div>
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i data-lucide="git-merge" class="w-5 h-5 text-cyan-400"></i> 5-Phase Set Journey (Harmonic Progression)
+                        </h3>
+                        <p class="text-xs text-gray-300 mt-1">
+                            Tracks sequenced through Opening &rarr; Groove Building &rarr; Energy Building &rarr; Peak-Time &rarr; Cool-down.
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <select id="sequence-style-select" class="bg-gray-900 border border-gray-700 text-xs text-gray-200 rounded-lg px-3 py-2">
+                            <option value="harmonic" selected>Harmonic Camelot Flow</option>
+                            <option value="adventurous">Dynamic & Adventurous Lift</option>
+                        </select>
+                        <button id="re-sequence-btn" class="px-4 py-2 rounded-lg bg-cyan-700 hover:bg-cyan-600 text-white text-xs font-bold transition-all flex items-center gap-1.5">
+                            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Re-Sequence Set
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Telemetry banner for the sequence -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="glass-card rounded-xl p-4">
+                        <p class="text-xs text-gray-400 uppercase font-semibold">BPM Progression</p>
+                        <p id="seq-bpm-prog" class="text-lg font-bold text-cyan-300 font-mono mt-1">124.0 &rarr; 128.0 BPM</p>
+                    </div>
+                    <div class="glass-card rounded-xl p-4">
+                        <p class="text-xs text-gray-400 uppercase font-semibold">Energy Trajectory</p>
+                        <p id="seq-energy-prog" class="text-lg font-bold text-pink-400 font-mono mt-1">Warmup (5) &rarr; Peak (10) &rarr; Outro (6)</p>
+                    </div>
+                    <div class="glass-card rounded-xl p-4">
+                        <p class="text-xs text-gray-400 uppercase font-semibold">Harmonic Continuity</p>
+                        <p id="seq-harmonic-summary" class="text-xs text-purple-300 mt-1">Camelot Wheel Adjacent transitions</p>
+                    </div>
+                </div>
+
+                <!-- 5 Sequenced Phase Cards -->
+                <div id="sequence-phases-container" class="space-y-6">
+                    <!-- Rendered dynamically -->
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full py-6 mt-auto text-center border-t border-gray-800 text-gray-500 text-xs flex flex-col items-center gap-1">
+        <p>DJSyncAI &bull; AI Smart Track Discovery &bull; Official Extended Mixes Only</p>
+        <p class="font-mono text-gray-600">Local Logger Target: <span class="text-gray-400">Logs\logs.txt</span> &bull; Audio files must be acquired legally via authorized platforms</p>
+    </footer>
+
+    <!-- ===================================================================== -->
+    <!-- JAVASCRIPT APPLICATION LOGIC -->
+    <!-- ===================================================================== -->
+    <script>
+        // Logger Subsystem
+        const DJLogger = (function() {
+            const endpoints = [`${window.location.origin}/log`, 'http://127.0.0.1:8000/log', 'http://localhost:8000/log'];
+            let activeEndpoint = endpoints[0];
+            let isConnected = false;
+            let logQueue = [];
+            let isFlushing = false;
+
+            function updateUI(state) {
+                const badge = document.getElementById('logger-status-badge');
+                const dot = document.getElementById('logger-status-dot');
+                const text = document.getElementById('logger-status-text');
+                if (!badge || !dot || !text) return;
+
+                if (state === 'online') {
+                    dot.className = 'w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]';
+                    text.textContent = 'Logger Active (logs.txt)';
+                    text.className = 'text-xs text-emerald-400 font-medium';
+                } else {
+                    dot.className = 'w-2 h-2 rounded-full bg-rose-500';
+                    text.textContent = 'Logger Offline';
+                    text.className = 'text-xs text-rose-400 font-medium';
+                }
+            }
+
+            async function flush() {
+                if (isFlushing || logQueue.length === 0) return;
+                isFlushing = true;
+
+                const batch = logQueue.slice(0, 40);
+                const payload = batch.map(i => `[${i.timestamp}] [${i.level.toUpperCase()}] ${i.message}`).join('\n');
+
+                let delivered = false;
+                for (const ep of endpoints) {
+                    try {
+                        const res = await fetch(ep, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+                            body: payload
+                        });
+                        if (res.ok) {
+                            activeEndpoint = ep;
+                            delivered = true;
+                            isConnected = true;
+                            break;
+                        }
+                    } catch (e) {}
+                }
+
+                if (delivered) {
+                    logQueue.splice(0, batch.length);
+                    updateUI('online');
+                } else {
+                    isConnected = false;
+                    updateUI('offline');
+                }
+                isFlushing = false;
+            }
+
+            setInterval(() => { if (logQueue.length > 0 || !isConnected) flush(); }, 3500);
+
+            function record(level, ...args) {
+                const now = new Date();
+                const pad = n => String(n).padStart(2, '0');
+                const timestamp = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+                const message = args.map(a => typeof a === 'object' && a !== null ? JSON.stringify(a) : String(a)).join(' ');
+                logQueue.push({ timestamp, level, message });
+                flush();
+            }
+
+            return {
+                info: (...args) => record('info', ...args),
+                warn: (...args) => record('warn', ...args),
+                error: (...args) => record('error', ...args),
+                status: (...args) => record('status', ...args),
+                break: (...args) => record('break', ...args),
+                flush: flush
+            };
+        })();
+
+        console.log = function(...args) { DJLogger.info(...args); };
+        console.warn = function(...args) { DJLogger.warn(...args); };
+        console.error = function(...args) { DJLogger.error(...args); };
+
+        window.addEventListener('error', e => DJLogger.break(`Uncaught Exception: ${e.message}`, e.error));
+        window.addEventListener('unhandledrejection', e => DJLogger.break('Unhandled Rejection:', e.reason));
+
+        lucide.createIcons();
+
+        // Application State
+        const API_KEY_STORAGE = "djsyncai_gemini_api_key";
+        const MODEL_STORAGE = "djsyncai_gemini_model";
+        let activeApiKey = localStorage.getItem(API_KEY_STORAGE) || "";
+        let activeModel = localStorage.getItem(MODEL_STORAGE) || "gemini-3.8-flash";
+
+        let parsedTracks = [];
+        let discoveredTracks = [];
+        let currentSequence = null;
+        let isDiscoveryCancelled = false;
+
+        // UI Helpers
+        function showToast(message) {
+            const toast = document.getElementById('toast-msg');
+            const text = document.getElementById('toast-text');
+            text.textContent = message;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 3500);
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function updateApiKeyBadge() {
+            const apiKeyBtn = document.getElementById('api-key-btn');
+            const apiKeyBtnText = document.getElementById('api-key-btn-text');
+            if (activeApiKey) {
+                apiKeyBtnText.textContent = "API Key (Active)";
+                apiKeyBtn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-emerald-500/40 bg-emerald-950/40 text-emerald-300 text-xs font-medium transition-all shadow-sm";
+            } else {
+                apiKeyBtnText.textContent = "API Key (Optional)";
+                apiKeyBtn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-purple-500/30 bg-purple-950/30 text-purple-300 text-xs font-medium transition-all shadow-sm";
+            }
+        }
+        updateApiKeyBadge();
+
+        // API Key Modal Listeners
+        const apiKeyModal = document.getElementById('api-key-modal');
+        const apiKeyInput = document.getElementById('api-key-input');
+        const apiModelSelect = document.getElementById('api-model-select');
+
+        document.getElementById('api-key-btn').addEventListener('click', () => {
+            apiKeyInput.value = activeApiKey;
+            apiModelSelect.value = activeModel;
+            apiKeyModal.classList.remove('hidden');
+        });
+        document.getElementById('close-modal-btn').addEventListener('click', () => apiKeyModal.classList.add('hidden'));
+        document.getElementById('cancel-key-btn').addEventListener('click', () => apiKeyModal.classList.add('hidden'));
+
+        document.getElementById('save-key-btn').addEventListener('click', () => {
+            activeApiKey = apiKeyInput.value.trim();
+            activeModel = apiModelSelect.value || "gemini-3.8-flash";
+            localStorage.setItem(MODEL_STORAGE, activeModel);
+            if (activeApiKey) {
+                localStorage.setItem(API_KEY_STORAGE, activeApiKey);
+                DJLogger.status(`Gemini API key configured (model: ${activeModel}).`);
+            } else {
+                localStorage.removeItem(API_KEY_STORAGE);
+                DJLogger.warn(`Gemini API key cleared (model kept as ${activeModel}).`);
+            }
+            updateApiKeyBadge();
+            apiKeyModal.classList.add('hidden');
+            showToast("Settings saved successfully.");
+        });
+
+        document.getElementById('clear-key-btn').addEventListener('click', () => {
+            activeApiKey = "";
+            apiKeyInput.value = "";
+            localStorage.removeItem(API_KEY_STORAGE);
+            updateApiKeyBadge();
+            apiKeyModal.classList.add('hidden');
+            showToast("API key removed.");
+        });
+
+        function showError(msg) {
+            DJLogger.warn(`UI Alert: ${msg}`);
+            document.getElementById('error-text').textContent = msg;
+            document.getElementById('error-message').classList.remove('hidden');
+        }
+        document.getElementById('dismiss-error-btn').addEventListener('click', () => {
+            document.getElementById('error-message').classList.add('hidden');
+        });
+
+        // Reset UI
+        document.getElementById('reset-btn').addEventListener('click', () => {
+            document.getElementById('upload-section').classList.remove('hidden');
+            document.getElementById('results-section').classList.add('hidden');
+            document.getElementById('discovery-results-section').classList.add('hidden');
+            document.getElementById('discovery-progress-section').classList.add('hidden');
+            document.getElementById('file-upload').value = "";
+            parsedTracks = [];
+            discoveredTracks = [];
+            currentSequence = null;
+        });
+
+        // Ingestion & File Handling
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('file-upload');
+        dropzone.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', handleFileSelect);
+
+        dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('border-purple-500', 'bg-gray-800/30'); });
+        dropzone.addEventListener('dragleave', e => { e.preventDefault(); dropzone.classList.remove('border-purple-500', 'bg-gray-800/30'); });
+        dropzone.addEventListener('drop', e => {
+            e.preventDefault();
+            dropzone.classList.remove('border-purple-500', 'bg-gray-800/30');
+            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                fileInput.files = e.dataTransfer.files;
+                handleFileSelect({ target: fileInput });
+            }
+        });
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            DJLogger.status(`Ingesting playlist: "${file.name}" (${(file.size/1024).toFixed(1)} KB)`);
+            const isXML = file.name.toLowerCase().endsWith('.xml');
+            const isM3U8 = file.name.toLowerCase().endsWith('.m3u8');
+
+            if (!isXML && !isM3U8) {
+                showError("Please upload an authentic Rekordbox .xml or .m3u8 playlist file.");
+                return;
+            }
+
+            document.getElementById('upload-section').classList.add('hidden');
+            document.getElementById('loading-section').classList.remove('hidden');
+
+            const reader = new FileReader();
+            reader.onload = async e => {
+                if (isXML) await processXML(e.target.result, file.name);
+                else await processM3U8(e.target.result, file.name);
+            };
+            reader.onerror = err => showError("Failed to read file.");
+            reader.readAsText(file);
+        }
+
+        // Embedded DJ Metadata & Naming Convention Parser
+        function parseEmbeddedDjMetadata(rawTitle, rawArtist, location = "") {
+            const filename = (location || "").split('\\').pop().split('/').pop().replace(/\.[^/.]+$/, "");
+            const combined = `${rawArtist || ''} - ${rawTitle || ''} - ${filename}`.trim();
+
+            // 1. Camelot Key
+            const keyMatch = combined.match(/\b([1-9]|1[0-2])[AB]\b/i);
+            const camelotKey = keyMatch ? keyMatch[0].toUpperCase() : "";
+
+            // 2. BPM
+            const bpmMatch = combined.match(/\b(1[1-7][0-9](?:\.[0-9]+)?)\b/);
+            let bpm = "";
+            let bpmNum = null;
+            if (bpmMatch) {
+                const b = parseFloat(bpmMatch[1]);
+                if (b >= 60 && b <= 200) {
+                    bpmNum = b;
+                    bpm = b.toFixed(1);
+                }
+            }
+
+            // 3. Energy Tag (e.g. '126 - 6 - ' or '7A - 126 - 6' or 'Energy 8')
+            let energy = null;
+            const eMatch = combined.match(/(?:1[1-7][0-9](?:\.[0-9]+)?)\s*-\s*([1-9]|10)\s*-/);
+            if (eMatch) {
+                energy = parseInt(eMatch[1], 10);
+            } else {
+                const eMatch2 = combined.match(/(?:[1-9]|1[0-2])[AB]\s*-\s*(?:1[1-7][0-9](?:\.[0-9]+)?)\s*-\s*([1-9]|10)\b/i);
+                if (eMatch2) {
+                    energy = parseInt(eMatch2[1], 10);
+                } else {
+                    const eMatch3 = combined.match(/(?:energy|e)\s*[:=\-_]?\s*([1-9]|10)\b/i);
+                    if (eMatch3) {
+                        energy = parseInt(eMatch3[1], 10);
+                    }
+                }
+            }
+
+            // 4. Dynamic Danceability
+            let danceability = null;
+            if (energy !== null) {
+                if (energy >= 8) danceability = Math.min(10, energy + 1);
+                else if (energy >= 6) danceability = Math.min(10, energy + 2);
+                else danceability = Math.max(1, energy + 2);
+            }
+
+            // 5. Clean Title & Clean Artist
+            let cleanTitle = (rawTitle || "").trim();
+            cleanTitle = cleanTitle.replace(/^(?:[1-9]|1[0-2])[AB]\s*-\s*/i, '');
+            cleanTitle = cleanTitle.replace(/^(?:1[1-7][0-9](?:\.[0-9]+)?)\s*-\s*/i, '');
+            cleanTitle = cleanTitle.replace(/^(?:[1-9]|10)\s*-\s*/i, '');
+            cleanTitle = cleanTitle.replace(/\s*-\s*(?:[1-9]|1[0-2])[AB]$/i, '');
+            cleanTitle = cleanTitle.replace(/^[-_\s]+|[-_\s]+$/g, '');
+
+            let cleanArtist = (rawArtist || "").trim();
+            if (/^[-_]?\s*(?:[1-9]|1[0-2])[AB]$/i.test(cleanArtist)) {
+                cleanArtist = "";
+            }
+
+            const isPlaceholder = !cleanArtist || ["speef", "unknown artist", "unknown", "va", "various artists"].includes(cleanArtist.toLowerCase());
+            if (isPlaceholder) {
+                if (cleanTitle.includes(" - ")) {
+                    const parts = cleanTitle.split(" - ");
+                    cleanArtist = parts[0].trim();
+                    cleanTitle = parts.slice(1).join(" - ").trim();
+                } else {
+                    const remixM = cleanTitle.match(/\(([^)]+)\)/);
+                    if (remixM) {
+                        const inner = remixM[1].trim().replace(/\b(edit|bootleg|remix|dub|vip|mix|extended)\b/gi, '').trim();
+                        if (inner) {
+                            cleanArtist = inner;
+                            cleanTitle = cleanTitle.replace(/\s*\([^)]+\)/g, '').trim();
+                        }
+                    } else if (cleanTitle.includes(" x ") || cleanTitle.includes(" feat ") || cleanTitle.includes(" vs ")) {
+                        cleanArtist = cleanTitle;
+                    }
+                }
+            } else if (cleanTitle.includes(" - ") && ["speef", "unknown artist", "unknown"].includes(cleanArtist.toLowerCase())) {
+                const parts = cleanTitle.split(" - ");
+                if (parts.length >= 2) {
+                    cleanArtist = parts[0].trim();
+                    cleanTitle = parts.slice(1).join(" - ").trim();
+                }
+            }
+
+            // 6. Electronic Genre classification
+            const lowerCombined = `${cleanArtist} ${cleanTitle} ${combined}`.toLowerCase();
+            let genre = "";
+            if (lowerCombined.includes("latin tech") || lowerCombined.includes("cumbia") || lowerCombined.includes("besito") || lowerCombined.includes("pescador") || lowerCombined.includes("cha cha") || lowerCombined.includes("san pacho")) {
+                genre = "Tech House / Latin Tech";
+            } else if (lowerCombined.includes("tech house") || lowerCombined.includes("speef") || lowerCombined.includes("hayakers") || lowerCombined.includes("sam blans") || lowerCombined.includes("beltran") || lowerCombined.includes("fisher") || lowerCombined.includes("chris lake")) {
+                genre = "Tech House";
+            } else if (lowerCombined.includes("shapeshifters") || lowerCombined.includes("lola") || lowerCombined.includes("defected") || lowerCombined.includes("glitterbox") || lowerCombined.includes("classic house")) {
+                genre = "House / Classic Club";
+            } else if (lowerCombined.includes("afro") || lowerCombined.includes("amapiano") || lowerCombined.includes("keinemusik")) {
+                genre = "Afro House";
+            } else if (lowerCombined.includes("melodic") || lowerCombined.includes("afterlife") || lowerCombined.includes("anyma")) {
+                genre = "Melodic Techno";
+            } else if (bpmNum) {
+                if (bpmNum >= 124.0 && bpmNum <= 128.5) genre = "Tech House";
+                else if (bpmNum >= 120.0 && bpmNum < 124.0) genre = "Deep House";
+                else if (bpmNum > 128.5 && bpmNum <= 134.0) genre = "Driving Techno";
+                else if (bpmNum > 134.0 && bpmNum <= 145.0) genre = "Hard Techno / Bass House";
+                else if (bpmNum >= 170.0 && bpmNum <= 178.0) genre = "Drum & Bass";
+                else if (bpmNum >= 115.0 && bpmNum < 120.0) genre = "Nu Disco / Downtempo";
+            }
+
+            return {
+                cleanTitle: cleanTitle || rawTitle || "Unknown Title",
+                cleanArtist: cleanArtist || rawArtist || "Electronic Artist",
+                bpm: bpm,
+                key: camelotKey,
+                energy: energy,
+                danceability: danceability,
+                genre: genre
+            };
+        }
+
+        async function processXML(xmlString, fileName) {
+            try {
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(xmlString, "text/xml");
+                if (xmlDoc.getElementsByTagName("parsererror").length > 0) throw new Error("Invalid XML syntax.");
+
+                const trackNodes = xmlDoc.getElementsByTagName("TRACK");
+                if (trackNodes.length === 0) throw new Error("No <TRACK> elements found in XML.");
+
+                parsedTracks = [];
+                const maxTracks = trackNodes.length;
+
+                for (let i = 0; i < maxTracks; i++) {
+                    const node = trackNodes[i];
+                    let rawTitle = node.getAttribute("Name") || "Unknown Title";
+                    let rawArtist = node.getAttribute("Artist") || "Unknown Artist";
+                    let rawGenre = node.getAttribute("Genre") || "";
+                    let rawBpm = node.getAttribute("AverageBpm") || "";
+                    let rawKey = node.getAttribute("Tonality") || "";
+                    let locationAttr = node.getAttribute("Location") || "";
+
+                    const meta = parseEmbeddedDjMetadata(rawTitle, rawArtist, locationAttr);
+
+                    parsedTracks.push({
+                        id: `trk_${i}`,
+                        title: meta.cleanTitle || rawTitle,
+                        artist: (meta.cleanArtist && meta.cleanArtist !== "Electronic Artist") ? meta.cleanArtist : rawArtist,
+                        genre: rawGenre || meta.genre,
+                        bpm: rawBpm ? parseFloat(rawBpm).toFixed(1) : meta.bpm,
+                        key: rawKey || meta.key,
+                        year: node.getAttribute("Year") || "",
+                        location: locationAttr,
+                        filePath: locationAttr,
+                        energy: meta.energy,
+                        danceability: meta.danceability,
+                        style: rawGenre || meta.genre
+                    });
+                }
+                DJLogger.status(`Extracted ${parsedTracks.length} tracks from ${fileName}. Initiating real-time streaming analysis...`);
+                await streamAnalyzePlaylist(parsedTracks, fileName);
+            } catch (err) {
+                DJLogger.break(`XML parse failure: ${err.message}`);
+                showError(err.message);
+                document.getElementById('upload-section').classList.remove('hidden');
+                document.getElementById('loading-section').classList.add('hidden');
+            }
+        }
+
+        async function processM3U8(m3u8String, fileName) {
+            try {
+                const lines = m3u8String.split(/\r?\n/);
+                parsedTracks = [];
+                let currentTrack = null;
+
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    if (!line) continue;
+
+                    if (line.startsWith('#EXTINF:')) {
+                        const commaIndex = line.indexOf(',');
+                        let artistTitle = commaIndex !== -1 ? line.substring(commaIndex + 1).trim() : "Unknown Track";
+                        let artist = "Unknown Artist";
+                        let title = artistTitle;
+                        if (artistTitle.includes(' - ')) {
+                            const parts = artistTitle.split(' - ');
+                            artist = parts[0].trim();
+                            title = parts.slice(1).join(' - ').trim();
+                        }
+
+                        const meta = parseEmbeddedDjMetadata(title, artist, "");
+
+                        currentTrack = {
+                            id: `trk_${parsedTracks.length}`,
+                            title: meta.cleanTitle,
+                            artist: meta.cleanArtist,
+                            genre: meta.genre,
+                            bpm: meta.bpm,
+                            key: meta.key,
+                            year: "",
+                            location: "",
+                            filePath: "",
+                            energy: meta.energy,
+                            danceability: meta.danceability,
+                            style: meta.genre
+                        };
+                    } else if (!line.startsWith('#')) {
+                        if (!currentTrack) {
+                            let filename = line.split('\\').pop().split('/').pop().replace(/\.[^/.]+$/, "");
+                            let artist = "Unknown Artist";
+                            let title = filename;
+                            if (filename.includes(' - ')) {
+                                const parts = filename.split(' - ');
+                                artist = parts[0].trim();
+                                title = parts.slice(1).join(' - ').trim();
+                            }
+                            const meta = parseEmbeddedDjMetadata(title, artist, line);
+
+                            currentTrack = {
+                                id: `trk_${parsedTracks.length}`,
+                                title: meta.cleanTitle,
+                                artist: meta.cleanArtist,
+                                genre: meta.genre,
+                                bpm: meta.bpm,
+                                key: meta.key,
+                                year: "",
+                                location: line,
+                                filePath: line,
+                                energy: meta.energy,
+                                danceability: meta.danceability,
+                                style: meta.genre
+                            };
+                        } else {
+                            currentTrack.location = line;
+                            currentTrack.filePath = line;
+                            // Re-check with full file path if needed
+                            const meta = parseEmbeddedDjMetadata(currentTrack.title, currentTrack.artist, line);
+                            if (meta.energy !== null && currentTrack.energy === null) {
+                                currentTrack.energy = meta.energy;
+                                currentTrack.danceability = meta.danceability;
+                            }
+                            if (!currentTrack.genre && meta.genre) {
+                                currentTrack.genre = meta.genre;
+                            }
+                        }
+                        parsedTracks.push(currentTrack);
+                        currentTrack = null;
+                    }
+                }
+                if (parsedTracks.length === 0) throw new Error("No tracks found in M3U8.");
+                DJLogger.status(`Parsed ${parsedTracks.length} tracks from ${fileName}. Initiating real-time streaming analysis...`);
+                await streamAnalyzePlaylist(parsedTracks, fileName);
+            } catch (err) {
+                DJLogger.break(`M3U8 parse failure: ${err.message}`);
+                showError(err.message);
+                document.getElementById('upload-section').classList.remove('hidden');
+                document.getElementById('loading-section').classList.add('hidden');
+            }
+        }
+
+        // =====================================================================
+        // REAL SSE STREAM PARSER HELPER
+        // =====================================================================
+        async function parseSseStream(response, onEvent) {
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder('utf-8');
+            let buffer = '';
+
+            try {
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    buffer += decoder.decode(value, { stream: true });
+                    const parts = buffer.split('\n\n');
+                    buffer = parts.pop();
+
+                    for (const part of parts) {
+                        const lines = part.split('\n');
+                        for (const line of lines) {
+                            const trimmed = line.trim();
+                            if (trimmed.startsWith('data: ')) {
+                                const jsonStr = trimmed.substring(6).trim();
+                                try {
+                                    const data = JSON.parse(jsonStr);
+                                    onEvent(data);
+                                } catch (err) {
+                                    console.error("SSE JSON Parse Error:", err, jsonStr);
+                                }
+                            }
+                        }
+                    }
+                }
+            } finally {
+                reader.releaseLock();
+            }
+        }
+
+        // =====================================================================
+        // LIVE PLAYLIST ANALYSIS STREAMING SUB-SYSTEM (Section 2 & 3)
+        // =====================================================================
+        let analyzeAbortController = null;
+        let currentPlaylistDna = null;
+
+        const toggleIngestLogBtn = document.getElementById('toggle-ingest-log-btn');
+        const ingestLogContainer = document.getElementById('ingest-activity-log-container');
+        const cancelAnalysisBtn = document.getElementById('cancel-analysis-btn');
+
+        toggleIngestLogBtn.addEventListener('click', () => {
+            ingestLogContainer.classList.toggle('hidden');
+            document.getElementById('toggle-ingest-log-text').textContent = ingestLogContainer.classList.contains('hidden') ? 'Activity Log' : 'Hide Log';
+        });
+
+        cancelAnalysisBtn.addEventListener('click', () => {
+            if (analyzeAbortController) {
+                analyzeAbortController.abort();
+                analyzeAbortController = null;
+            }
+            DJLogger.warn("User cancelled song details analysis.");
+            showToast("Analysis cancelled.");
+            document.getElementById('loading-section').classList.add('hidden');
+            document.getElementById('upload-section').classList.remove('hidden');
+        });
+
+        async function streamAnalyzePlaylist(rawTracks, fileName) {
+            if (!rawTracks || rawTracks.length === 0) {
+                showError("No tracks found in playlist.");
+                return;
+            }
+
+            document.getElementById('upload-section').classList.add('hidden');
+            document.getElementById('results-section').classList.add('hidden');
+            document.getElementById('loading-section').classList.remove('hidden');
+
+            const progressBar = document.getElementById('ingestion-progress-bar');
+            const percentText = document.getElementById('ingestion-percent-text');
+            const stageText = document.getElementById('ingestion-stage-text');
+            const trackCounter = document.getElementById('ingestion-track-counter');
+            const currentTrackText = document.getElementById('ingestion-current-track');
+            const bpmNote = document.getElementById('ingestion-bpm-note');
+            const harmonicNote = document.getElementById('ingestion-harmonic-note');
+            const energyNote = document.getElementById('ingestion-energy-note');
+            const statTotal = document.getElementById('ingest-stat-total');
+            const statAnalysed = document.getElementById('ingest-stat-analysed');
+            const statRemaining = document.getElementById('ingest-stat-remaining');
+            const statIncomplete = document.getElementById('ingest-stat-incomplete');
+            const stateBadge = document.getElementById('ingestion-state-badge');
+            const logBox = document.getElementById('ingest-activity-log');
+            const timestampSpan = document.getElementById('ingest-timestamp');
+
+            statTotal.textContent = String(rawTracks.length);
+            statAnalysed.textContent = "0";
+            statRemaining.textContent = String(rawTracks.length);
+            statIncomplete.textContent = "0";
+            progressBar.style.width = "0%";
+            percentText.textContent = "0%";
+            stageText.textContent = "Playlist uploaded successfully.";
+            trackCounter.textContent = `Analysed: 0 / ${rawTracks.length} tracks | Remaining: ${rawTracks.length}`;
+            stateBadge.textContent = "Processing";
+            stateBadge.className = "px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-purple-950/80 text-purple-300 border border-purple-500/40 uppercase";
+            logBox.innerHTML = "";
+
+            function appendIngestLog(msg, type = 'info') {
+                const p = document.createElement('p');
+                const now = new Date();
+                const time = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+                if (timestampSpan) timestampSpan.textContent = time;
+
+                if (type === 'stage') {
+                    p.className = 'text-purple-300 font-semibold';
+                    p.innerHTML = `<span class="text-gray-500 font-mono">[${time}]</span> <span class="text-purple-400 font-bold">[STAGE]</span> ${escapeHtml(msg)}`;
+                } else if (type === 'track') {
+                    p.className = 'text-cyan-300 font-medium';
+                    p.innerHTML = `<span class="text-gray-500 font-mono">[${time}]</span> <span class="text-cyan-400 font-bold">[TRACK]</span> ${escapeHtml(msg)}`;
+                } else if (type === 'complete') {
+                    p.className = 'text-emerald-300 font-bold';
+                    p.innerHTML = `<span class="text-gray-500 font-mono">[${time}]</span> <span class="text-emerald-400 font-bold">[DONE]</span> ${escapeHtml(msg)}`;
+                } else {
+                    p.className = 'text-gray-300';
+                    p.innerHTML = `<span class="text-gray-500 font-mono">[${time}]</span> ${escapeHtml(msg)}`;
+                }
+                logBox.appendChild(p);
+                logBox.scrollTop = logBox.scrollHeight;
+            }
+
+            appendIngestLog(`Playlist uploaded: "${fileName}" with ${rawTracks.length} total tracks.`, 'stage');
+            analyzeAbortController = new AbortController();
+
+            try {
+                const resp = await fetch(`${window.location.origin}/api/analyze-stream`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        tracks: rawTracks,
+                        fileName: fileName,
+                        apiKey: activeApiKey,
+                        model: activeModel
+                    }),
+                    signal: analyzeAbortController.signal
+                });
+
+                if (!resp.ok) throw new Error(`Server returned HTTP ${resp.status}`);
+
+                await parseSseStream(resp, data => {
+                    if (data.status === 'processing') {
+                        if (data.stage) stageText.textContent = data.stage;
+                        if (data.percent !== undefined) {
+                            progressBar.style.width = `${data.percent}%`;
+                            percentText.textContent = `${data.percent}%`;
+                        }
+                        if (data.total !== undefined) statTotal.textContent = String(data.total);
+                        if (data.analyzed !== undefined) statAnalysed.textContent = String(data.analyzed);
+                        if (data.remaining !== undefined) statRemaining.textContent = String(data.remaining);
+                        if (data.incomplete !== undefined) statIncomplete.textContent = String(data.incomplete);
+                        if (data.analyzed !== undefined && data.total !== undefined) {
+                            trackCounter.textContent = `Analysed: ${data.analyzed} / ${data.total} tracks | Remaining: ${data.remaining}`;
+                        }
+                        if (data.currentTrack) {
+                            currentTrackText.textContent = data.currentTrack;
+                            bpmNote.textContent = `BPM: ${data.currentBpm || 'Not available'}`;
+                            harmonicNote.textContent = `Camelot Key: ${data.currentKey || 'Not available'}`;
+                            const energyDisplay = (data.currentEnergy !== null && data.currentEnergy !== undefined) ? `${data.currentEnergy}/10` : 'Not available';
+                            const danceDisplay = (data.currentDanceability !== null && data.currentDanceability !== undefined) ? `${data.currentDanceability}/10` : 'Not available';
+                            energyNote.textContent = `Energy: ${energyDisplay} | Dance: ${danceDisplay}`;
+                            appendIngestLog(`${data.currentTrack} [${data.analysisStatus || 'status'} | BPM: ${data.currentBpm || 'N/A'} | Key: ${data.currentKey || 'N/A'} | Energy: ${energyDisplay} | Dance: ${danceDisplay}]`, 'track');
+                        }
+                    } else if (data.status === 'complete') {
+                        progressBar.style.width = '100%';
+                        percentText.textContent = '100%';
+                        stateBadge.textContent = 'Completed';
+                        stateBadge.className = 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-950/80 text-emerald-300 border border-emerald-500/40 uppercase';
+                        stageText.textContent = data.stage;
+                        appendIngestLog(data.stage, 'complete');
+
+                        parsedTracks = data.analyzedTracks || rawTracks;
+                        currentPlaylistDna = data.dna;
+
+                        setTimeout(() => {
+                            displayIngestedDashboard(data.summary, currentPlaylistDna);
+                        }, 400);
+                    } else if (data.status === 'failed') {
+                        throw new Error(data.error || data.stage);
+                    }
+                });
+
+            } catch (err) {
+                if (err.name === 'AbortError') {
+                    stateBadge.textContent = "Cancelled";
+                    stateBadge.className = "px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-rose-950/80 text-rose-300 border border-rose-500/40 uppercase";
+                    appendIngestLog("Playlist analysis cancelled by user.", 'stage');
+                } else {
+                    DJLogger.break(`Analysis stream failure: ${err.message}`);
+                    showError(`Playlist analysis failed: ${err.message}`);
+                    document.getElementById('loading-section').classList.add('hidden');
+                    document.getElementById('upload-section').classList.remove('hidden');
+                }
+            } finally {
+                analyzeAbortController = null;
+            }
+        }
+
+        // Demo data loader
+        document.getElementById('demo-btn').addEventListener('click', async () => {
+            const demoXML = `<?xml version="1.0" encoding="UTF-8"?>
+                <djmd>
+                <COLLECTION Entries="7">
+                    <TRACK Name="Strobe" Artist="deadmau5" Genre="Progressive House" AverageBpm="128.00" Tonality="8A" Year="2009" />
+                    <TRACK Name="Opus" Artist="Eric Prydz" Genre="Progressive House" AverageBpm="126.00" Tonality="6B" Year="2015" />
+                    <TRACK Name="Innerbloom" Artist="RÜFÜS DU SOL" Genre="Electronic" AverageBpm="122.00" Tonality="11B" Year="2015" />
+                    <TRACK Name="Losing It" Artist="FISHER" Genre="Tech House" AverageBpm="125.00" Tonality="4A" Year="2018" />
+                    <TRACK Name="Inspector Norse" Artist="Todd Terje" Genre="Nu Disco" AverageBpm="119.00" Tonality="11A" Year="2012" />
+                    <TRACK Name="Glue" Artist="Bicep" Genre="Breaks" AverageBpm="130.00" Tonality="10A" Year="2017" />
+                    <TRACK Name="Born Slippy (Nuxx)" Artist="Underworld" Genre="Techno" AverageBpm="140.00" Tonality="5B" Year="1995" />
+                </COLLECTION>
+                </djmd>`;
+            await processXML(demoXML, "Demo_Playlist.xml");
+        });
+
+        // =====================================================================
+        // DASHBOARD RENDERING & TRACK TABLE HELPERS
+        // =====================================================================
+        function renderAnalysisStatusBadge(status) {
+            if (status === 'audio_analysed') {
+                return '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-950/80 text-emerald-300 border border-emerald-500/40" title="Full DSP Audio Signal Analysis">● Audio Analysed</span>';
+            } else if (status === 'metadata_only') {
+                return '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-950/80 text-amber-300 border border-amber-500/40" title="Imported from Rekordbox XML Tags">▲ Metadata Only</span>';
+            } else if (status === 'missing_audio') {
+                return '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-rose-950/80 text-rose-300 border border-rose-500/40" title="Audio File Not Found On Disk">✕ Missing Audio</span>';
+            } else if (status === 'analysis_failed') {
+                return '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-red-950/80 text-red-300 border border-red-500/40">! Failed</span>';
+            }
+            return '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-gray-800 text-gray-400 border border-gray-700">Awaiting</span>';
+        }
+
+        function renderEnergyBadge(score) {
+            if (score === null || score === undefined || score === '') return '<span class="text-gray-500 italic text-xs">Not available</span>';
+            const num = Math.round(Number(score));
+            if (num >= 8) {
+                return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-pink-950/80 text-pink-300 border border-pink-500/40 font-mono">${num}/10 🔥</span>`;
+            } else if (num >= 6) {
+                return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-purple-950/80 text-purple-300 border border-purple-500/40 font-mono">${num}/10 ⚡</span>`;
+            } else {
+                return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-blue-950/80 text-blue-300 border border-blue-500/40 font-mono">${num}/10 🌊</span>`;
+            }
+        }
+
+        function renderDanceabilityBadge(score) {
+            if (score === null || score === undefined || score === '') return '<span class="text-gray-500 italic text-xs">Not available</span>';
+            const num = Math.round(Number(score));
+            if (num >= 8) {
+                return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-cyan-950/80 text-cyan-300 border border-cyan-500/40 font-mono">${num}/10 💃</span>`;
+            } else if (num >= 6) {
+                return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-teal-950/80 text-teal-300 border border-teal-500/40 font-mono">${num}/10 🕺</span>`;
+            } else {
+                return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-gray-800 text-gray-400 border border-gray-700 font-mono">${num}/10</span>`;
+            }
+        }
+
+        function displayIngestedDashboard(summary, dna) {
+            document.getElementById('loading-section').classList.add('hidden');
+            document.getElementById('results-section').classList.remove('hidden');
+
+            const totalCount = (summary && summary.totalLoaded !== undefined) ? summary.totalLoaded : parsedTracks.length;
+            const audioAnalysedCount = (summary && summary.audioAnalysed !== undefined) ? summary.audioAnalysed : parsedTracks.filter(t => t.analysis_status === 'audio_analysed').length;
+            const metadataOnlyCount = (summary && summary.metadataOnly !== undefined) ? summary.metadataOnly : parsedTracks.filter(t => t.analysis_status === 'metadata_only').length;
+            const incompleteCount = (summary && summary.incomplete !== undefined) ? summary.incomplete : parsedTracks.filter(t => !t.bpm || !t.key).length;
+
+            document.getElementById('summary-total-tracks').textContent = String(totalCount);
+            document.getElementById('summary-analysed-tracks').textContent = `${audioAnalysedCount} (${Math.round((audioAnalysedCount / Math.max(totalCount, 1)) * 100)}%)`;
+            document.getElementById('summary-incomplete-tracks').textContent = String(metadataOnlyCount);
+
+            if (dna && dna.bpmLandscape) {
+                document.getElementById('summary-bpm-range').textContent = dna.bpmLandscape;
+                document.getElementById('insight-bpm').textContent = dna.bpmLandscape;
+            } else if (summary && summary.bpmRange) {
+                document.getElementById('summary-bpm-range').textContent = summary.bpmRange;
+                document.getElementById('insight-bpm').textContent = summary.bpmRange;
+            } else {
+                const bpms = parsedTracks.map(t => parseFloat(t.bpm)).filter(b => !isNaN(b) && b > 0);
+                if (bpms.length > 0) {
+                    const minB = Math.min(...bpms);
+                    const maxB = Math.max(...bpms);
+                    const avgB = (bpms.reduce((a,b)=>a+b,0)/bpms.length).toFixed(1);
+                    const desc = `${minB.toFixed(1)} - ${maxB.toFixed(1)} BPM (Avg: ${avgB}) [Calculated from ${bpms.length} of ${parsedTracks.length} tracks]`;
+                    document.getElementById('summary-bpm-range').textContent = desc;
+                    document.getElementById('insight-bpm').textContent = desc;
+                } else {
+                    const emptyMsg = "Insufficient analysed tracks to calculate playlist BPM identity.";
+                    document.getElementById('summary-bpm-range').textContent = "Not available";
+                    document.getElementById('insight-bpm').textContent = emptyMsg;
+                }
+            }
+
+            const genres = (dna && dna.primaryGenres && dna.primaryGenres.length) ? dna.primaryGenres : ((summary && summary.mainGenres && summary.mainGenres.length) ? summary.mainGenres : []);
+            document.getElementById('summary-genres').textContent = genres.length ? genres.join(', ') : 'Not available';
+
+            if (dna && dna.energyTrackCount > 0 && dna.avgEnergy !== null && dna.avgEnergy !== undefined && !isNaN(Number(dna.avgEnergy))) {
+                document.getElementById('summary-energy-profile').textContent = `${Number(dna.avgEnergy).toFixed(1)}/10 (${dna.energyTrackCount} tracks)`;
+            } else if (summary && summary.energyProfile) {
+                document.getElementById('summary-energy-profile').textContent = summary.energyProfile;
+            } else {
+                document.getElementById('summary-energy-profile').textContent = 'Not available';
+            }
+
+            const camelots = (dna && dna.camelotKeys && dna.camelotKeys.length) ? dna.camelotKeys : ((summary && summary.keyDistribution && summary.keyDistribution.length) ? summary.keyDistribution : []);
+            document.getElementById('summary-key-distribution').textContent = camelots.length ? camelots.slice(0, 4).join(', ') : 'Not available';
+
+            document.getElementById('insight-vibe').textContent = (dna && dna.overallVibe) ? dna.overallVibe : ((summary && summary.overallVibe) ? summary.overallVibe : "Awaiting track audio analysis or metadata.");
+            document.getElementById('insight-flow').textContent = (dna && dna.patternsAndFlow) ? dna.patternsAndFlow : ((summary && summary.patternFlow) ? summary.patternFlow : "Insufficient analysed tracks to calculate harmonic flow trajectory.");
+
+            document.getElementById('track-count').textContent = `${parsedTracks.length} Tracks`;
+
+            // Populate table
+            const tbody = document.getElementById('track-table-body');
+            tbody.innerHTML = "";
+            parsedTracks.forEach((t, idx) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-700/30 transition-colors";
+                
+                const bpmText = (t.bpm && parseFloat(t.bpm) > 0)
+                    ? `${parseFloat(t.bpm).toFixed(1)} BPM${t.bpm_confidence ? ' <span class="text-[10px] text-gray-500 font-normal">(' + Math.round(t.bpm_confidence * 100) + '%)</span>' : ''}`
+                    : '<span class="text-gray-500 italic text-xs">Not available</span>';
+
+                const keyText = (t.camelotKey || t.key)
+                    ? `${escapeHtml(t.camelotKey || t.key)}${t.key_confidence ? ' <span class="text-[10px] text-gray-500 font-normal">(' + Math.round(t.key_confidence * 100) + '%)</span>' : ''}`
+                    : '<span class="text-gray-500 italic text-xs">Not available</span>';
+
+                tr.innerHTML = `
+                    <td class="p-4 text-gray-500 font-mono">${idx + 1}</td>
+                    <td class="p-4 text-center font-mono">${renderAnalysisStatusBadge(t.analysis_status)}</td>
+                    <td class="p-4 font-medium text-white max-w-[200px] truncate" title="${escapeHtml(t.title)}">${escapeHtml(t.title)}</td>
+                    <td class="p-4 text-gray-300 max-w-[150px] truncate" title="${escapeHtml(t.artist)}">${escapeHtml(t.artist)}</td>
+                    <td class="p-4 text-gray-400 font-sans">${escapeHtml(t.genre) || '<span class="text-gray-500 italic text-xs">Not available</span>'}</td>
+                    <td class="p-4 text-right text-cyan-300 font-mono font-semibold">${bpmText}</td>
+                    <td class="p-4 text-center font-mono text-purple-300 font-medium">${keyText}</td>
+                    <td class="p-4 text-center text-gray-400">${escapeHtml(t.year) || '<span class="text-gray-500 italic text-xs">-</span>'}</td>
+                    <td class="p-4 text-center font-mono">${renderEnergyBadge(t.energy)}</td>
+                    <td class="p-4 text-center font-mono">${renderDanceabilityBadge(t.danceability)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+            lucide.createIcons();
+        }
+
+        // Audio Folder & Files Linker handlers
+        const linkAudioBtn = document.getElementById('link-audio-btn');
+        const linkAudioInput = document.getElementById('link-audio-input');
+        const linkFolderInput = document.getElementById('link-folder-input');
+
+        if (linkAudioBtn) {
+            linkAudioBtn.addEventListener('click', () => {
+                const choice = confirm("Select 'OK' to pick your Music Folder, or 'Cancel' to pick individual Audio Files.");
+                if (choice && linkFolderInput) {
+                    linkFolderInput.click();
+                } else if (linkAudioInput) {
+                    linkAudioInput.click();
+                }
+            });
+        }
+
+        async function handleAudioFilesSelected(fileListObj) {
+            if (!fileListObj || fileListObj.length === 0) return;
+            const fileList = [];
+            for (let i = 0; i < fileListObj.length; i++) {
+                fileList.push(fileListObj[i].webkitRelativePath || fileListObj[i].name);
+            }
+
+            DJLogger.status(`Matching ${fileList.length} local audio files against playlist tracks...`);
+            try {
+                const resp = await fetch(`${window.location.origin}/api/match-audio`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        tracks: parsedTracks,
+                        audioFiles: fileList
+                    })
+                });
+                if (!resp.ok) throw new Error(`Server returned HTTP ${resp.status}`);
+                const data = await resp.json();
+                if (data.tracks) {
+                    parsedTracks = data.tracks;
+                    currentPlaylistDna = data.dna;
+                    displayIngestedDashboard(null, currentPlaylistDna);
+                    DJLogger.status(`Audio matching complete: ${data.audioAnalysedCount} audio analysed, ${data.metadataOnlyCount} metadata only, ${data.missingAudioCount} missing audio.`);
+                    alert(`Audio matching complete!\n\nAudio Analysed: ${data.audioAnalysedCount}\nMetadata Only: ${data.metadataOnlyCount}\nMissing Audio: ${data.missingAudioCount}`);
+                }
+            } catch (err) {
+                DJLogger.break(`Audio matching failure: ${err.message}`);
+                alert(`Failed to match audio files: ${err.message}`);
+            }
+        }
+
+        if (linkAudioInput) linkAudioInput.addEventListener('change', e => handleAudioFilesSelected(e.target.files));
+        if (linkFolderInput) linkFolderInput.addEventListener('change', e => handleAudioFilesSelected(e.target.files));
+
+        // =====================================================================
+        // AI SMART TRACK DISCOVERY STREAMING ENGINE (17 Stages & 7 Counters)
+        // =====================================================================
+        let discoveryAbortController = null;
+
+        const startDiscoveryBtn = document.getElementById('start-discovery-btn');
+        const cancelDiscoveryBtn = document.getElementById('cancel-discovery-btn');
+        const retryDiscoveryBtn = document.getElementById('retry-discovery-btn');
+        const toggleDiscoveryLogBtn = document.getElementById('toggle-discovery-log-btn');
+        const discoveryLogContainer = document.getElementById('discovery-log-container');
+        const progressSection = document.getElementById('discovery-progress-section');
+        const discoveryResultsSection = document.getElementById('discovery-results-section');
+
+        startDiscoveryBtn.addEventListener('click', launchDiscovery);
+        retryDiscoveryBtn.addEventListener('click', launchDiscovery);
+
+        toggleDiscoveryLogBtn.addEventListener('click', () => {
+            discoveryLogContainer.classList.toggle('hidden');
+        });
+
+        cancelDiscoveryBtn.addEventListener('click', () => {
+            if (discoveryAbortController) {
+                discoveryAbortController.abort();
+                discoveryAbortController = null;
+            }
+        });
+
+        async function launchDiscovery() {
+            if (!parsedTracks.length) {
+                showError("Please upload and analyse a playlist first.");
+                return;
+            }
+
+            progressSection.classList.remove('hidden');
+            discoveryResultsSection.classList.add('hidden');
+
+            const period = document.getElementById('discovery-period-select').value;
+            const statScanned = document.getElementById('stat-scanned');
+            const statVerified = document.getElementById('stat-verified');
+            const statRejected = document.getElementById('stat-rejected');
+            const statRejectedUnver = document.getElementById('stat-rejected-unverified');
+            const statDuplicates = document.getElementById('stat-duplicates');
+            const statEligible = document.getElementById('stat-eligible');
+            const statFinalRec = document.getElementById('stat-final-rec');
+            const statusText = document.getElementById('progress-status-text');
+            const stateBadge = document.getElementById('discovery-state-badge');
+            const timestampSpan = document.getElementById('discovery-timestamp');
+            const progressBar = document.getElementById('discovery-progress-bar');
+            const progressPercent = document.getElementById('discovery-progress-percent');
+            const liveLog = document.getElementById('discovery-live-log');
+
+            retryDiscoveryBtn.classList.add('hidden');
+            liveLog.innerHTML = "";
+            statScanned.textContent = "0";
+            statVerified.textContent = "0";
+            statRejected.textContent = "0";
+            statRejectedUnver.textContent = "0";
+            statDuplicates.textContent = "0";
+            statEligible.textContent = "0";
+            statFinalRec.textContent = "0 / 60";
+            progressBar.style.width = "4%";
+            progressPercent.textContent = "4% Complete";
+            stateBadge.textContent = "Searching";
+            stateBadge.className = "px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-cyan-950/80 text-cyan-300 border border-cyan-400/40 uppercase";
+
+            function updateStagePill(stageNum) {
+                for (let i = 1; i <= 17; i++) {
+                    const el = document.getElementById(`stage-${i}`);
+                    if (!el) continue;
+                    if (i < stageNum) {
+                        el.className = "p-1.5 rounded bg-emerald-950/60 border border-emerald-500/60 text-emerald-300 font-bold truncate";
+                    } else if (i === stageNum) {
+                        el.className = "p-1.5 rounded bg-purple-900/80 border border-purple-400 text-purple-100 font-extrabold animate-pulse truncate";
+                    } else {
+                        el.className = "p-1.5 rounded bg-gray-800/40 border border-gray-700 text-gray-500 truncate";
+                    }
+                }
+            }
+
+            function appendLiveLog(msg, type = 'info') {
+                const p = document.createElement('p');
+                const now = new Date();
+                const time = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+                if (timestampSpan) timestampSpan.textContent = time;
+
+                if (type === 'verified') {
+                    p.className = 'text-emerald-300 font-medium flex items-start gap-1.5';
+                    p.innerHTML = `<span class="text-gray-500 font-mono shrink-0">[${time}]</span> <span class="text-emerald-400 font-bold shrink-0">[VERIFIED &#10003;]</span> <span class="truncate">${escapeHtml(msg)}</span>`;
+                } else if (type === 'rejected') {
+                    p.className = 'text-rose-300/80 flex items-start gap-1.5';
+                    p.innerHTML = `<span class="text-gray-500 font-mono shrink-0">[${time}]</span> <span class="text-rose-400 font-bold shrink-0">[REJECTED &#10005;]</span> <span class="truncate">${escapeHtml(msg)}</span>`;
+                } else if (type === 'duplicate') {
+                    p.className = 'text-amber-300/80 flex items-start gap-1.5';
+                    p.innerHTML = `<span class="text-gray-500 font-mono shrink-0">[${time}]</span> <span class="text-amber-400 font-bold shrink-0">[DUPLICATE &#8856;]</span> <span class="truncate">${escapeHtml(msg)}</span>`;
+                } else if (type === 'source') {
+                    p.className = 'text-cyan-300 font-medium flex items-start gap-1.5';
+                    p.innerHTML = `<span class="text-gray-500 font-mono shrink-0">[${time}]</span> <span class="text-cyan-400 font-bold shrink-0">[SOURCE]</span> <span class="truncate">${escapeHtml(msg)}</span>`;
+                } else if (type === 'warning') {
+                    p.className = 'text-yellow-300/90 flex items-start gap-1.5';
+                    p.innerHTML = `<span class="text-gray-500 font-mono shrink-0">[${time}]</span> <span class="text-yellow-400 font-bold shrink-0">[NOTICE]</span> <span class="truncate">${escapeHtml(msg)}</span>`;
+                } else if (type === 'pipeline') {
+                    p.className = 'text-purple-300 font-semibold flex items-start gap-1.5';
+                    p.innerHTML = `<span class="text-gray-500 font-mono shrink-0">[${time}]</span> <span class="text-purple-400 font-bold shrink-0">[STAGE]</span> <span class="truncate">${escapeHtml(msg)}</span>`;
+                } else {
+                    p.className = 'text-gray-400 flex items-start gap-1.5';
+                    p.innerHTML = `<span class="text-gray-500 font-mono shrink-0">[${time}]</span> <span>${escapeHtml(msg)}</span>`;
+                }
+                liveLog.appendChild(p);
+                liveLog.scrollTop = liveLog.scrollHeight;
+            }
+
+            updateStagePill(1);
+            appendLiveLog("Initializing AI Smart Track Discovery for 60 Extended Mixes...", "pipeline");
+
+            discoveryAbortController = new AbortController();
+
+            try {
+                DJLogger.status(`Launching /api/discover-stream (Target: 60 Extended Mixes, Period: ${period})...`);
+
+                const payload = {
+                    tracks: parsedTracks,
+                    apiKey: activeApiKey,
+                    model: activeModel,
+                    targetPeriod: period,
+                    maxResults: 60
+                };
+
+                const resp = await fetch(`${window.location.origin}/api/discover-stream`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                    signal: discoveryAbortController.signal
+                });
+
+                if (!resp.ok) throw new Error(`Server returned HTTP ${resp.status}`);
+
+                await parseSseStream(resp, data => {
+                    if (data.stageNumber !== undefined) {
+                        updateStagePill(data.stageNumber);
+                    }
+                    if (data.stage) {
+                        statusText.textContent = data.stage;
+                    }
+                    if (data.percent !== undefined) {
+                        progressBar.style.width = `${data.percent}%`;
+                        progressPercent.textContent = `${data.percent}% Complete`;
+                    }
+                    if (data.status) {
+                        const s = data.status.toLowerCase();
+                        if (s === 'searching') {
+                            stateBadge.textContent = "Searching";
+                            stateBadge.className = "px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-cyan-950/80 text-cyan-300 border border-cyan-400/40 uppercase";
+                        } else if (s === 'verifying') {
+                            stateBadge.textContent = "Verifying";
+                            stateBadge.className = "px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-pink-950/80 text-pink-300 border border-pink-400/40 uppercase";
+                        } else if (s === 'processing') {
+                            stateBadge.textContent = "Processing";
+                            stateBadge.className = "px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-purple-950/80 text-purple-300 border border-purple-500/40 uppercase";
+                        } else if (s === 'warning') {
+                            stateBadge.textContent = "Notice";
+                            stateBadge.className = "px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-950/80 text-amber-300 border border-amber-500/40 uppercase";
+                        }
+                    }
+
+                    if (data.source) {
+                        if (data.sourceStatus === 'active') {
+                            appendLiveLog(`${data.source}: Active — ${data.sourceReason || 'Searching catalog...'}`, 'source');
+                        } else if (data.sourceStatus === 'unavailable') {
+                            appendLiveLog(`${data.source}: ${data.sourceReason || 'Unavailable — bypassed'}`, 'warning');
+                        }
+                    }
+
+                    if (data.type === 'audit') {
+                        if (data.counters) {
+                            statScanned.textContent = String(data.counters.candidatesDiscovered);
+                            statVerified.textContent = String(data.counters.extendedVerified);
+                            statRejected.textContent = String(data.counters.rejectedNonExtended);
+                            statRejectedUnver.textContent = String(data.counters.rejectedUnverified);
+                            statDuplicates.textContent = String(data.counters.duplicatesRemoved);
+                            statEligible.textContent = String(data.counters.eligibleRemaining);
+                            statFinalRec.textContent = `${data.counters.finalRecommendations} / 60`;
+                        }
+                        if (data.verdict === 'verified') {
+                            appendLiveLog(`${data.candidate} — ${data.reason}`, 'verified');
+                        } else if (data.verdict === 'duplicate') {
+                            appendLiveLog(`${data.candidate} — ${data.reason}`, 'duplicate');
+                        } else {
+                            appendLiveLog(`${data.candidate} — ${data.reason}`, 'rejected');
+                        }
+                    }
+
+                    if (data.candidatesDiscovered !== undefined && !data.counters) {
+                        statScanned.textContent = String(data.candidatesDiscovered);
+                    }
+
+                    if (data.status === 'complete') {
+                        updateStagePill(17);
+                        progressBar.style.width = '100%';
+                        progressPercent.textContent = '100% Complete';
+                        stateBadge.textContent = "Completed";
+                        stateBadge.className = "px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-950/80 text-emerald-300 border border-emerald-500/40 uppercase";
+
+                        statScanned.textContent = String(data.totalCandidatesScanned);
+                        statVerified.textContent = String(data.totalVerifiedReturned);
+                        statRejected.textContent = String(data.totalRejectedNonExtended);
+                        statRejectedUnver.textContent = String(data.totalRejectedUnverified);
+                        statDuplicates.textContent = String(data.totalDuplicatesRemoved);
+                        statEligible.textContent = String(data.totalVerifiedReturned);
+                        statFinalRec.textContent = `${data.totalVerifiedReturned} / 60`;
+
+                        appendLiveLog(`Discovery complete: ${data.totalVerifiedReturned} verified Extended Mixes ready for set flow!`, 'verified');
+
+                        setTimeout(() => {
+                            progressSection.classList.add('hidden');
+                            displayDiscoveryResults(data);
+                        }, 450);
+                    }
+                });
+
+            } catch (err) {
+                if (err.name === 'AbortError') {
+                    stateBadge.textContent = "Cancelled";
+                    stateBadge.className = "px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-rose-950/80 text-rose-300 border border-rose-500/40 uppercase";
+                    statusText.textContent = "Discovery search cancelled by user.";
+                    appendLiveLog("Extended Mix discovery cancelled by user.", "warning");
+                    retryDiscoveryBtn.classList.remove('hidden');
+                    showToast("Discovery cancelled.");
+                    DJLogger.warn("Extended Mix discovery search cancelled.");
+                } else {
+                    stateBadge.textContent = "Failed";
+                    stateBadge.className = "px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-rose-950/80 text-rose-300 border border-rose-500/40 uppercase";
+                    retryDiscoveryBtn.classList.remove('hidden');
+                    DJLogger.break(`Discovery failed: ${err.message}`, err);
+                    showError(`Discovery error: ${err.message}`);
+                }
+            } finally {
+                discoveryAbortController = null;
+            }
+        }
+
+        function displayDiscoveryResults(data) {
+            discoveredTracks = data.verifiedTracks || [];
+            currentSequence = data.suggestedSequence || null;
+
+            document.getElementById('discovery-results-section').classList.remove('hidden');
+            document.getElementById('discovery-badge-count').textContent = `${discoveredTracks.length} Verified Extended Mixes`;
+            document.getElementById('discovery-explanation-text').textContent = data.explanation || "Curated strictly from verified Extended Mixes.";
+
+            renderDiscoveryTable(discoveredTracks);
+            if (currentSequence) renderDJSequence(currentSequence);
+
+            document.getElementById('discovery-results-section').scrollIntoView({ behavior: 'smooth' });
+            DJLogger.status(`Rendered ${discoveredTracks.length} verified extended tracks in Discovery Dashboard.`);
+        }
+
+        // =====================================================================
+        // DISCOVERY TABLE RENDERING & FILTERING (Section 9 requirement)
+        // =====================================================================
+        function renderDiscoveryTable(tracks) {
+            const tbody = document.getElementById('discovery-table-body');
+            tbody.innerHTML = "";
+
+            if (!tracks.length) {
+                tbody.innerHTML = `<tr><td colspan="13" class="p-8 text-center text-gray-400">No verified Extended Mixes match the active filter criteria.</td></tr>`;
+                return;
+            }
+
+            tracks.forEach((t, idx) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-800/40 transition-colors group";
+
+                const renderStatBar = (val, colorClass) => {
+                    const pct = Math.min(Math.max((val / 10) * 100, 0), 100);
+                    return `
+                        <div class="flex items-center justify-center gap-1.5 font-mono">
+                            <span class="w-3 text-right font-semibold">${val}</span>
+                            <div class="w-12 h-1.5 bg-gray-700/80 rounded-full overflow-hidden">
+                                <div class="h-full ${colorClass}" style="width: ${pct}%"></div>
+                            </div>
+                        </div>
+                    `;
+                };
+
+                let windowBadge = `<span class="px-1.5 py-0.5 rounded text-[10px] bg-gray-800 text-gray-400 border border-gray-700">Classic</span>`;
+                if (t.isRecentSixMonths) {
+                    windowBadge = `<span class="px-1.5 py-0.5 rounded text-[10px] bg-cyan-950/80 text-cyan-300 border border-cyan-400/50 font-bold uppercase tracking-wider">NEW (6mo)</span>`;
+                } else if (t.releaseWindow && t.releaseWindow.includes("Year")) {
+                    windowBadge = `<span class="px-1.5 py-0.5 rounded text-[10px] bg-purple-950/80 text-purple-300 border border-purple-500/40">Past Year</span>`;
+                }
+
+                const bpLink = t.links?.beatport ? `<a href="${t.links.beatport}" target="_blank" rel="noopener noreferrer" class="px-2 py-1 rounded bg-emerald-950/40 hover:bg-emerald-900/60 text-emerald-300 border border-emerald-500/30 text-[10px] font-bold">Beatport</a>` : '';
+                const txLink = t.links?.traxsource ? `<a href="${t.links.traxsource}" target="_blank" rel="noopener noreferrer" class="px-2 py-1 rounded bg-blue-950/40 hover:bg-blue-900/60 text-blue-300 border border-blue-500/30 text-[10px] font-bold">Traxsource</a>` : '';
+                const scLink = t.links?.soundcloud ? `<a href="${t.links.soundcloud}" target="_blank" rel="noopener noreferrer" class="px-2 py-1 rounded bg-orange-950/40 hover:bg-orange-900/60 text-orange-300 border border-orange-500/30 text-[10px] font-bold">SoundCloud</a>` : '';
+
+                tr.innerHTML = `
+                    <td class="p-4 text-gray-500 font-mono font-medium">${idx + 1}</td>
+                    <td class="p-4 font-bold text-white max-w-[200px] truncate" title="${escapeHtml(t.title)}">${escapeHtml(t.title)}</td>
+                    <td class="p-4 text-gray-300 max-w-[150px] truncate font-medium" title="${escapeHtml(t.artist)}">${escapeHtml(t.artist)}</td>
+                    <td class="p-4">
+                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-gradient-to-r from-purple-900/60 to-cyan-950/60 border border-purple-400/50 text-cyan-300 text-[11px] font-extrabold tracking-wide uppercase">
+                            <i data-lucide="disc" class="w-3 h-3 text-purple-400"></i> ${escapeHtml(t.mixName)}
+                        </span>
+                    </td>
+                    <td class="p-4 text-center font-mono text-gray-300">${escapeHtml(t.duration) || '-'}</td>
+                    <td class="p-4 text-center font-mono font-bold text-cyan-300">${(t.bpm !== null && t.bpm !== undefined && !isNaN(Number(t.bpm))) ? Number(t.bpm).toFixed(1) : '-'}</td>
+                    <td class="p-4 text-center">
+                        <span class="px-2 py-0.5 rounded bg-gray-800 border border-gray-700 font-mono font-bold text-purple-300">${escapeHtml(t.camelotKey || t.key || '-')}</span>
+                    </td>
+                    <td class="p-4 text-gray-400">
+                        <div class="flex flex-col">
+                            <span class="font-medium text-gray-300">${escapeHtml(t.genre)}</span>
+                            <span class="text-[10px] text-gray-500">${escapeHtml(t.subgenre)}</span>
+                        </div>
+                    </td>
+                    <td class="p-4 text-center">${renderStatBar(t.energy, 'bg-pink-500')}</td>
+                    <td class="p-4 text-gray-400">
+                        <div class="flex items-center gap-1.5">
+                            <span>${t.releaseDate}</span>
+                            ${windowBadge}
+                        </div>
+                    </td>
+                    <td class="p-4 text-center font-mono">
+                        <div class="flex flex-col items-center">
+                            <span class="px-2 py-0.5 rounded bg-purple-950/80 border border-purple-500/40 text-purple-200 font-bold">${t.overallScore}%</span>
+                            <span class="text-[9px] text-gray-500 mt-0.5">DJ: ${t.djScore}% | Sim: ${t.similarityScore}%</span>
+                        </div>
+                    </td>
+                    <td class="p-4 text-gray-300 text-[11px]">
+                        <div class="flex flex-col">
+                            <span class="font-semibold text-emerald-400 flex items-center gap-1"><i data-lucide="shield-check" class="w-3 h-3"></i> Verified</span>
+                            <span class="text-[10px] text-gray-500 truncate max-w-[120px]" title="${escapeHtml(t.verificationSource)}">${escapeHtml(t.verificationSource)}</span>
+                        </div>
+                    </td>
+                    <td class="p-4 text-center">
+                        <div class="flex items-center justify-center gap-1.5">
+                            ${bpLink}
+                            ${txLink}
+                            ${scLink}
+                            <button onclick="copySearchString('${escapeHtml(t.searchString)}')" class="p-1 rounded bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-700" title="Copy DJ Search String">
+                                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            lucide.createIcons();
+        }
+
+        function copySearchString(str) {
+            navigator.clipboard.writeText(str).then(() => {
+                showToast(`Copied search string: "${str}"`);
+            }).catch(() => {
+                showToast(`Search string: ${str}`);
+            });
+        }
+
+        // Search & Filter event listeners
+        function applyFilters() {
+            if (!discoveredTracks.length) return;
+            const searchVal = document.getElementById('filter-search-input').value.toLowerCase().trim();
+            const keyVal = document.getElementById('filter-key-select').value;
+            const windowVal = document.getElementById('filter-window-select').value;
+            const sortVal = document.getElementById('sort-by-select').value;
+
+            let filtered = discoveredTracks.filter(t => {
+                if (searchVal) {
+                    const matchTitle = t.title.toLowerCase().includes(searchVal);
+                    const matchArtist = t.artist.toLowerCase().includes(searchVal);
+                    const matchGenre = t.genre.toLowerCase().includes(searchVal) || t.subgenre.toLowerCase().includes(searchVal);
+                    if (!matchTitle && !matchArtist && !matchGenre) return false;
+                }
+                if (keyVal && t.camelotKey !== keyVal) return false;
+                if (windowVal === 'recent_6m' && !t.isRecentSixMonths) return false;
+                if (windowVal === 'recent_1y' && t.releaseWindow === 'All-Time Classic Club') return false;
+                if (windowVal === 'classic' && t.releaseWindow !== 'All-Time Classic Club') return false;
+                return true;
+            });
+
+            // Sorting
+            filtered.sort((a, b) => {
+                if (sortVal === 'overall') return b.overallScore - a.overallScore;
+                if (sortVal === 'dj') return b.djScore - a.djScore;
+                if (sortVal === 'similarity') return b.similarityScore - a.similarityScore;
+                if (sortVal === 'bpm_asc') return a.bpm - b.bpm;
+                if (sortVal === 'bpm_desc') return b.bpm - a.bpm;
+                if (sortVal === 'energy_desc') return b.energy - a.energy;
+                if (sortVal === 'date_desc') return b.releaseDate.localeCompare(a.releaseDate);
+                return 0;
+            });
+
+            renderDiscoveryTable(filtered);
+        }
+
+        document.getElementById('filter-search-input').addEventListener('input', applyFilters);
+        document.getElementById('filter-key-select').addEventListener('change', applyFilters);
+        document.getElementById('filter-window-select').addEventListener('change', applyFilters);
+        document.getElementById('sort-by-select').addEventListener('change', applyFilters);
+
+        // =====================================================================
+        // AI DJ 5-PHASE SET SEQUENCER (Section 7 requirement)
+        // =====================================================================
+
+        function renderDJSequence(sequenceData) {
+            const container = document.getElementById('sequence-phases-container');
+            container.innerHTML = "";
+
+            document.getElementById('seq-bpm-prog').textContent = sequenceData.bpmProgression || "Dynamic";
+            document.getElementById('seq-energy-prog').textContent = sequenceData.energyProgression || "Balanced Flow";
+            document.getElementById('seq-harmonic-summary').textContent = sequenceData.harmonicSummary || "Harmonically aligned";
+
+            const phaseColors = {
+                "Opening / Warm-up": "border-l-indigo-500",
+                "Groove Building": "border-l-cyan-500",
+                "Energy Building": "border-l-purple-500",
+                "Peak-Time": "border-l-pink-500",
+                "Closing / Cool-down": "border-l-blue-400"
+            };
+
+            const phaseIcons = {
+                "Opening / Warm-up": "sunrise",
+                "Groove Building": "waves",
+                "Energy Building": "trending-up",
+                "Peak-Time": "zap",
+                "Closing / Cool-down": "moon"
+            };
+
+            const phases = sequenceData.phases || {};
+
+            Object.keys(phases).forEach((phaseName) => {
+                const items = phases[phaseName];
+                if (!items || !items.length) return;
+
+                const card = document.createElement('div');
+                card.className = `glass-panel rounded-2xl p-5 border-l-4 ${phaseColors[phaseName] || 'border-l-purple-500'} shadow-xl flex flex-col gap-4`;
+
+                let tracksHtml = "";
+                items.forEach((item, pIdx) => {
+                    const t = item.track;
+                    // Transition pill styling
+                    let transitionBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-950/80 text-cyan-300 border border-cyan-400/40">${item.transitionQuality}</span>`;
+                    if (item.transitionQuality.includes("Climb") || item.transitionQuality.includes("+1")) {
+                        transitionBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950/80 text-emerald-300 border border-emerald-400/40">${item.transitionQuality}</span>`;
+                    } else if (item.transitionQuality.includes("Boost") || item.transitionQuality.includes("+2")) {
+                        transitionBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-pink-950/80 text-pink-300 border border-pink-400/40">${item.transitionQuality}</span>`;
+                    }
+
+                    tracksHtml += `
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 rounded-xl bg-gray-900/60 border border-gray-800 hover:border-gray-700 transition-colors">
+                            <div class="flex items-center gap-3">
+                                <span class="w-6 h-6 rounded-full bg-gray-800 flex items-center justify-center text-xs font-mono font-bold text-gray-400">${item.position}</span>
+                                <div>
+                                    <h5 class="text-sm font-bold text-white">${escapeHtml(t.title)} <span class="text-xs text-purple-300 font-normal">(${escapeHtml(t.mixName)})</span></h5>
+                                    <p class="text-xs text-gray-400 font-medium">${escapeHtml(t.artist)} &bull; <span class="text-gray-300 font-mono">${(t.bpm !== null && t.bpm !== undefined && !isNaN(Number(t.bpm))) ? Number(t.bpm).toFixed(1) + ' BPM' : 'BPM -'}</span> &bull; <span class="font-mono text-cyan-300">${escapeHtml(t.camelotKey || t.key || '-')}</span></p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-3 self-end sm:self-auto">
+                                <div class="text-right hidden sm:block">
+                                    <p class="text-[11px] text-gray-400">${escapeHtml(item.transitionReason)}</p>
+                                </div>
+                                ${transitionBadge}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between border-b border-gray-800/80 pb-3">
+                        <div class="flex items-center gap-2.5">
+                            <i data-lucide="${phaseIcons[phaseName] || 'disc'}" class="w-5 h-5 text-purple-400"></i>
+                            <h4 class="font-extrabold text-base text-white tracking-wide uppercase">${phaseName}</h4>
+                            <span class="text-xs font-mono bg-gray-800 px-2 py-0.5 rounded-full text-gray-400">${items.length} Tracks</span>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        ${tracksHtml}
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+
+            lucide.createIcons();
+        }
+
+        // Tab View Toggling
+        const tabTableBtn = document.getElementById('tab-table-btn');
+        const tabSequenceBtn = document.getElementById('tab-sequence-btn');
+        const discoveryTableView = document.getElementById('discovery-table-view');
+        const discoverySequenceView = document.getElementById('discovery-sequence-view');
+
+        tabTableBtn.addEventListener('click', () => {
+            tabTableBtn.className = "px-4 py-2 rounded-lg text-sm font-bold bg-purple-600 text-white flex items-center gap-2 transition-all shadow-md";
+            tabSequenceBtn.className = "px-4 py-2 rounded-lg text-sm font-semibold bg-gray-800/80 text-gray-400 hover:text-white flex items-center gap-2 transition-all";
+            discoveryTableView.classList.remove('hidden');
+            discoverySequenceView.classList.add('hidden');
+        });
+
+        tabSequenceBtn.addEventListener('click', () => {
+            tabSequenceBtn.className = "px-4 py-2 rounded-lg text-sm font-bold bg-cyan-600 text-white flex items-center gap-2 transition-all shadow-md";
+            tabTableBtn.className = "px-4 py-2 rounded-lg text-sm font-semibold bg-gray-800/80 text-gray-400 hover:text-white flex items-center gap-2 transition-all";
+            discoveryTableView.classList.add('hidden');
+            discoverySequenceView.classList.remove('hidden');
+        });
+
+        // Re-sequencing
+        document.getElementById('re-sequence-btn').addEventListener('click', async () => {
+            if (!discoveredTracks.length) return;
+            const style = document.getElementById('sequence-style-select').value;
+            try {
+                showToast("Regenerating 5-phase set sequence...");
+                const resp = await fetch(`${window.location.origin}/api/sequence`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ tracks: discoveredTracks, transitionStyle: style })
+                });
+                if (resp.ok) {
+                    currentSequence = await resp.json();
+                    renderDJSequence(currentSequence);
+                    showToast("Sequence successfully regenerated!");
+                }
+            } catch (err) {
+                showError("Re-sequencing failed.");
+            }
+        });
+
+        // =====================================================================
+        // EXPORT FUNCTIONALITY (CSV, TXT, M3U8, REKORDBOX XML)
+        // =====================================================================
+
+        async function triggerExport(format) {
+            if (!discoveredTracks.length) {
+                showError("No discovered tracks to export.");
+                return;
+            }
+
+            try {
+                showToast(`Generating ${format.toUpperCase()} export...`);
+                const payload = {
+                    format: format,
+                    tracks: discoveredTracks,
+                    playlistName: "DJSyncAI 50 Extended Mixes",
+                    sequence: currentSequence
+                };
+
+                const resp = await fetch(`${window.location.origin}/api/export`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!resp.ok) throw new Error("Export generation failed.");
+
+                const blob = await resp.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                
+                const disp = resp.headers.get('Content-Disposition');
+                let filename = `DJSyncAI_Extended_Mixes.${format === 'rekordbox_xml' ? 'xml' : format}`;
+                if (disp && disp.includes('filename=')) {
+                    filename = disp.split('filename=')[1].replace(/"/g, '');
+                }
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+                showToast(`Downloaded ${filename}!`);
+                DJLogger.status(`User downloaded export: ${filename}`);
+            } catch (err) {
+                DJLogger.break(`Export error: ${err.message}`);
+                showError(`Failed to generate ${format} export.`);
+            }
+        }
+
+        document.getElementById('export-csv-btn').addEventListener('click', () => triggerExport('csv'));
+        document.getElementById('export-txt-btn').addEventListener('click', () => triggerExport('txt'));
+        document.getElementById('export-m3u8-btn').addEventListener('click', () => triggerExport('m3u8'));
+        document.getElementById('export-rekordbox-btn').addEventListener('click', () => triggerExport('rekordbox_xml'));
+
+    </script>
+</body>
+</html>
